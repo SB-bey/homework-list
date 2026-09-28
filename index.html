@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>作业清单 · 9月29日</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+    background: linear-gradient(160deg, #f2f8f0 0%, #e9f4ec 100%);
+    min-height: 100vh;
+    padding: 24px 16px 40px;
+    color: #1f2430;
+  }
+  .card {
+    max-width: 520px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(70, 150, 110, 0.14);
+    padding: 24px 20px 20px;
+  }
+  .header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 6px; }
+  .header h1 { font-size: 22px; font-weight: 700; letter-spacing: 1px; }
+  .date { font-size: 13px; color: #7f9c8a; }
+  .sub { font-size: 13px; color: #7f9c8a; margin-bottom: 16px; }
+  .progress-wrap { background: #e9f4ec; border-radius: 10px; height: 10px; margin-bottom: 18px; overflow: hidden; }
+  .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #4caf7d, #6fd09a); border-radius: 10px; transition: width .3s ease; }
+  .progress-text { font-size: 12px; color: #6f927e; margin-top: 6px; text-align: right; }
+  ul { list-style: none; }
+  li {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 10px;
+    border-bottom: 1px solid #e9f4ec;
+    font-size: 16px;
+    animation: fadeIn .25s ease;
+  }
+  li:last-child { border-bottom: none; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: none; } }
+  .check {
+    width: 22px; height: 22px; flex-shrink: 0;
+    border: 2px solid #a9cfb8; border-radius: 7px;
+    cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
+    transition: all .15s ease; position: relative;
+  }
+  .check svg { width: 14px; height: 14px; opacity: 0; transition: opacity .15s ease; }
+  li.done .check { background: #4caf7d; border-color: #4caf7d; }
+  li.done .check svg { opacity: 1; }
+  .text { flex: 1; cursor: pointer; line-height: 1.5; transition: color .15s ease; word-break: break-word; }
+  li.done .text { text-decoration: line-through; text-decoration-thickness: 2px; color: #b3c4ba; }
+  .del {
+    flex-shrink: 0; width: 26px; height: 26px; border: none; background: none;
+    color: #c2d4ca; font-size: 18px; line-height: 1; cursor: pointer; border-radius: 50%;
+    display: inline-flex; align-items: center; justify-content: center; transition: all .15s ease;
+  }
+  .del:hover { color: #ff6b7a; background: #fff0f2; }
+  .add-row { display: flex; gap: 10px; margin-top: 18px; }
+  .add-row input {
+    flex: 1; border: 2px solid #dcefe3; border-radius: 12px; padding: 12px 14px;
+    font-size: 15px; outline: none; background: #f8fcfa; transition: border-color .2s ease;
+  }
+  .add-row input:focus { border-color: #4caf7d; }
+  .add-row button {
+    border: none; border-radius: 12px; padding: 0 20px; font-size: 15px; font-weight: 600;
+    background: linear-gradient(90deg, #4caf7d, #6fd09a); color: #fff; cursor: pointer;
+    transition: opacity .2s ease;
+  }
+  .add-row button:active { opacity: .8; }
+  .suggest-card {
+    border: 2px solid #dcefe3; border-radius: 14px;
+    background: #f6fbf8; padding: 14px 14px 12px; margin-bottom: 16px;
+  }
+  .suggest-head { font-size: 13px; font-weight: 700; color: #4caf7d; margin-bottom: 8px; }
+  .suggest-body {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    min-height: 30px; padding: 8px 10px; background: #fff;
+    border: 1px dashed #c8e2d2; border-radius: 10px; font-size: 15px; margin-bottom: 10px;
+  }
+  .suggest-empty { color: #9db8aa; font-size: 14px; }
+  .do-btn {
+    margin-left: auto; border: none; border-radius: 9px; padding: 5px 14px;
+    font-size: 13px; font-weight: 600; background: #4caf7d; color: #fff; cursor: pointer;
+    flex-shrink: 0; transition: opacity .2s ease;
+  }
+  .do-btn:active { opacity: .75; }
+  .suggest-controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .mode-label { font-size: 12px; color: #8aa89a; }
+  .mode-btn {
+    border: 1.5px solid #c8e2d2; background: #fff; color: #6f927e;
+    border-radius: 8px; padding: 3px 12px; font-size: 12.5px; cursor: pointer; transition: all .15s ease;
+  }
+  .mode-btn.active { background: #4caf7d; border-color: #4caf7d; color: #fff; font-weight: 600; }
+  .pick-row select {
+    border: 1.5px solid #c8e2d2; background: #fff; color: #33543f;
+    border-radius: 8px; padding: 3px 8px; font-size: 12.5px; outline: none;
+  }
+  .hint { font-size: 12px; color: #a4b9ad; margin-top: 14px; text-align: center; }
+  .tag {
+    display: inline-block; font-size: 12px; color: #fff; border-radius: 6px;
+    padding: 1px 8px; margin-right: 8px; vertical-align: 1px; flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <h1>📋 作业清单</h1>
+    <span class="date">9月29日 周二</span>
+  </div>
+  <div class="sub">点一下条目即可划掉，完成进度自动保存</div>
+  <div class="progress-wrap"><div class="progress-bar" id="bar"></div></div>
+  <div class="progress-text" id="ptext"></div>
+  <div class="suggest-card">
+    <div class="suggest-head" id="suggestHead">🎯 下一个建议写</div>
+    <div class="suggest-body" id="suggestBody"></div>
+    <div class="suggest-controls">
+      <span class="mode-label">模式</span>
+      <button class="mode-btn active" id="modeGroup">同科优先</button>
+      <button class="mode-btn" id="modeRandom">随机</button>
+      <span class="mode-label" style="margin-left:4px">指定科目</span>
+      <select id="pickSubject"><option value="">自动</option></select>
+    </div>
+  </div>
+  <ul id="list"></ul>
+  <div class="add-row">
+    <input id="newItem" type="text" placeholder="添加作业，如：数学：练习册P10" maxlength="60">
+    <button id="addBtn">添加</button>
+  </div>
+  <div class="hint">点击条目旁的 × 可删除作业</div>
+</div>
+<script>
+(function(){
+  var KEY = 'hw-list-2026-09-29';
+  var COLORS = { '历史': '#9a7bd6', '化学': '#4aa3a3', '语文': '#c2579a', '英语': '#3fa86b', '政治': '#d0566e' };
+  var items = [];
+  try { items = JSON.parse(localStorage.getItem(KEY)) || null; } catch(e) { items = null; }
+  if (!items) {
+    items = [
+      { text: '第3课', subject: '历史', done: false },
+      { text: '21~22页', subject: '化学', done: false },
+      { text: '第1课两页', subject: '语文', done: false },
+      { text: '最后一自然段抄一背', subject: '英语', done: false },
+      { text: '基础训练下一课时', done: false },
+      { text: '12个短语', done: false },
+      { text: '基训 30~31页', subject: '政治', done: false },
+      { text: '基训 3~15页', subject: '政治', done: false }
+    ];
+    save();
+  }
+
+  var list = document.getElementById('list');
+  var input = document.getElementById('newItem');
+  var bar = document.getElementById('bar');
+  var ptext = document.getElementById('ptext');
+  var suggestBody = document.getElementById('suggestBody');
+  var suggestHead = document.getElementById('suggestHead');
+  var pickSubject = document.getElementById('pickSubject');
+  var mode = 'group';   // 'group' 同科优先 | 'random' 随机
+  var pick = '';        // '' 自动 | 科目名
+  var lastSubject = localStorage.getItem(KEY + '-last') || '';  // 记住正在写的科目
+
+  function save(){ localStorage.setItem(KEY, JSON.stringify(items)); }
+
+  function pickableSubjects(){
+    var subs = [];
+    items.forEach(function(it){
+      if(!it.done && it.subject && subs.indexOf(it.subject) === -1) subs.push(it.subject);
+    });
+    return subs;
+  }
+
+  function suggest(){
+    var undone = items.filter(function(it){ return !it.done; });
+    if(!undone.length){
+      suggestBody.innerHTML = '<span class="suggest-empty">🎉 全部写完啦，可以休息了！</span>';
+      suggestHead.textContent = '🎯 下一个建议写';
+      return;
+    }
+    var target = null, reason = '';
+    if(pick){
+      var pu = undone.filter(function(it){ return it.subject === pick; });
+      if(pu.length){ target = pu[0]; reason = '指定科目「' + pick + '」'; }
+      else {
+        suggestBody.innerHTML = '<span class="suggest-empty">「' + pick + '」已经写完啦 ✅</span>';
+        suggestHead.textContent = '🎯 下一个建议写';
+        return;
+      }
+    } else if(mode === 'group'){
+      // 先接着写正在写的科目（同科集中写完），写完再换剩余最多的科目
+      var lastUndone = null;
+      if(lastSubject){
+        var lu = undone.filter(function(it){ return it.subject === lastSubject; });
+        if(lu.length) lastUndone = lu[0];
+      }
+      if(lastUndone){
+        target = lastUndone;
+        reason = '接着写「' + lastSubject + '」，还剩 ' + lu.length + ' 项';
+      } else {
+        var counts = {};
+        undone.forEach(function(it){ if(it.subject) counts[it.subject] = (counts[it.subject]||0) + 1; });
+        var keys = Object.keys(counts);
+        if(keys.length){
+          keys.sort(function(a,b){ return counts[b] - counts[a]; });
+          target = undone.filter(function(it){ return it.subject === keys[0]; })[0];
+          reason = '开始写「' + keys[0] + '」，共 ' + counts[keys[0]] + ' 项';
+        } else {
+          target = undone[0];
+          reason = '按顺序来';
+        }
+      }
+    } else {
+      var subs = pickableSubjects();
+      if(subs.length){
+        var s = subs[Math.floor(Math.random()*subs.length)];
+        target = undone.filter(function(it){ return it.subject === s; })[0];
+        reason = '随机抽到「' + s + '」';
+      } else {
+        target = undone[Math.floor(Math.random()*undone.length)];
+        reason = '随机挑一项';
+      }
+    }
+    var idx = items.indexOf(target);
+    suggestBody.innerHTML = '';
+    suggestHead.textContent = '🎯 下一个建议写 · ' + reason;
+    if(target.subject){
+      var tag = document.createElement('span');
+      tag.className = 'tag';
+      tag.style.background = COLORS[target.subject] || '#999';
+      tag.textContent = target.subject;
+      suggestBody.appendChild(tag);
+    }
+    var txt = document.createElement('span');
+    txt.className = 'suggest-text';
+    txt.textContent = target.text;
+    suggestBody.appendChild(txt);
+    var btn = document.createElement('button');
+    btn.className = 'do-btn';
+    btn.textContent = '完成它 ✓';
+    btn.addEventListener('click', function(){
+      items[idx].done = true;
+      if(target.subject){ lastSubject = target.subject; localStorage.setItem(KEY + '-last', lastSubject); }
+      save(); render(); suggest();
+    });
+    suggestBody.appendChild(btn);
+  }
+
+  function refreshSubjects(){
+    var subs = pickableSubjects();
+    var cur = pickSubject.value;
+    pickSubject.innerHTML = '';
+    var opt0 = document.createElement('option');
+    opt0.value = ''; opt0.textContent = '自动';
+    pickSubject.appendChild(opt0);
+    subs.forEach(function(s){
+      var o = document.createElement('option');
+      o.value = s; o.textContent = s;
+      pickSubject.appendChild(o);
+    });
+    if(subs.indexOf(cur) !== -1) pickSubject.value = cur;
+    else pick = '';
+  }
+
+  document.getElementById('modeGroup').addEventListener('click', function(){
+    mode = 'group'; pick = '';
+    document.getElementById('modeGroup').classList.add('active');
+    document.getElementById('modeRandom').classList.remove('active');
+    pickSubject.value = '';
+    refreshSubjects(); suggest();
+  });
+  document.getElementById('modeRandom').addEventListener('click', function(){
+    mode = 'random'; pick = '';
+    document.getElementById('modeRandom').classList.add('active');
+    document.getElementById('modeGroup').classList.remove('active');
+    pickSubject.value = '';
+    refreshSubjects(); suggest();
+  });
+  pickSubject.addEventListener('change', function(){
+    pick = pickSubject.value;
+    if(pick) {
+      mode = 'group';
+      document.getElementById('modeGroup').classList.add('active');
+      document.getElementById('modeRandom').classList.remove('active');
+    }
+    suggest();
+  });
+
+  function render(){
+    list.innerHTML = '';
+    var done = 0;
+    items.forEach(function(item, idx){
+      if(item.done) done++;
+      var li = document.createElement('li');
+      if(item.done) li.className = 'done';
+      var check = document.createElement('span');
+      check.className = 'check';
+      check.setAttribute('aria-label','完成');
+      check.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12.5 9.5 18 20 6.5"/></svg>';
+      check.addEventListener('click', function(){ toggleDone(idx); });
+      var text = document.createElement('span');
+      text.className = 'text';
+      if(item.subject){
+        var tag = document.createElement('span');
+        tag.className = 'tag';
+        tag.style.background = COLORS[item.subject] || '#999';
+        tag.textContent = item.subject;
+        text.appendChild(tag);
+      }
+      text.appendChild(document.createTextNode(item.text));
+      text.addEventListener('click', function(){ toggleDone(idx); });
+      var del = document.createElement('button');
+      del.className = 'del';
+      del.innerHTML = '×';
+      del.setAttribute('aria-label','删除');
+      del.addEventListener('click', function(){ items.splice(idx,1); save(); render(); });
+      li.appendChild(check);
+      li.appendChild(text);
+      li.appendChild(del);
+      list.appendChild(li);
+    });
+    var pct = items.length ? Math.round(done/items.length*100) : 0;
+    bar.style.width = pct + '%';
+    ptext.textContent = items.length ? '已完成 ' + done + ' / ' + items.length + ' 项' : '还没有作业';
+    refreshSubjects();
+    suggest();
+  }
+
+  function toggleDone(idx){
+    items[idx].done = !items[idx].done;
+    if(items[idx].done && items[idx].subject){
+      lastSubject = items[idx].subject;
+      localStorage.setItem(KEY + '-last', lastSubject);
+    }
+    save(); render();
+  }
+
+  function add(){
+    var v = input.value.trim();
+    if(!v) return;
+    items.push({ text: v, done: false });
+    input.value = '';
+    save();
+    render();
+    input.focus();
+  }
+  document.getElementById('addBtn').addEventListener('click', add);
+  input.addEventListener('keydown', function(e){ if(e.key === 'Enter') add(); });
+
+  render();
+})();
+</script>
+</body>
+</html>
