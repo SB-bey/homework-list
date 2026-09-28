@@ -10,31 +10,32 @@
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
     font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
-    background: linear-gradient(160deg, #f2f8f0 0%, #e9f4ec 100%);
+    background: linear-gradient(160deg, #121418 0%, #0d0f12 100%);
     min-height: 100vh;
     padding: 24px 16px 40px;
-    color: #1f2430;
+    color: #e6e9ef;
   }
   .card {
     max-width: 520px;
     margin: 0 auto;
-    background: #ffffff;
+    background: #1b1f26;
     border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(70, 150, 110, 0.14);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+    border: 1px solid #262c36;
     padding: 24px 20px 20px;
   }
   .header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 6px; }
   .header h1 { font-size: 22px; font-weight: 700; letter-spacing: 1px; }
-  .date { font-size: 13px; color: #7f9c8a; }
-  .sub { font-size: 13px; color: #7f9c8a; margin-bottom: 16px; }
-  .progress-wrap { background: #e9f4ec; border-radius: 10px; height: 10px; margin-bottom: 18px; overflow: hidden; }
+  .date { font-size: 13px; color: #8b96a6; }
+  .sub { font-size: 13px; color: #8b96a6; margin-bottom: 16px; }
+  .progress-wrap { background: #2a303c; border-radius: 10px; height: 10px; margin-bottom: 18px; overflow: hidden; }
   .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #4caf7d, #6fd09a); border-radius: 10px; transition: width .3s ease; }
-  .progress-text { font-size: 12px; color: #6f927e; margin-top: 6px; text-align: right; }
+  .progress-text { font-size: 12px; color: #8b96a6; margin-top: 6px; text-align: right; }
   ul { list-style: none; }
   li {
     display: flex; align-items: center; gap: 12px;
     padding: 13px 10px;
-    border-bottom: 1px solid #e9f4ec;
+    border-bottom: 1px solid #262c36;
     font-size: 16px;
     animation: fadeIn .25s ease;
   }
@@ -42,7 +43,7 @@
   @keyframes fadeIn { from { opacity: 0; transform: translateY(-3px); } to { opacity: 1; transform: none; } }
   .check {
     width: 22px; height: 22px; flex-shrink: 0;
-    border: 2px solid #a9cfb8; border-radius: 7px;
+    border: 2px solid #465264; border-radius: 7px;
     cursor: pointer; display: inline-flex; align-items: center; justify-content: center;
     transition: all .15s ease; position: relative;
   }
@@ -50,36 +51,50 @@
   li.done .check { background: #4caf7d; border-color: #4caf7d; }
   li.done .check svg { opacity: 1; }
   .text { flex: 1; cursor: pointer; line-height: 1.5; transition: color .15s ease; word-break: break-word; }
-  li.done .text { text-decoration: line-through; text-decoration-thickness: 2px; color: #b3c4ba; }
+  li.done .text { text-decoration: line-through; text-decoration-thickness: 2px; color: #5a6474; }
   .del {
     flex-shrink: 0; width: 26px; height: 26px; border: none; background: none;
-    color: #c2d4ca; font-size: 18px; line-height: 1; cursor: pointer; border-radius: 50%;
+    color: #5f6a7c; font-size: 18px; line-height: 1; cursor: pointer; border-radius: 50%;
     display: inline-flex; align-items: center; justify-content: center; transition: all .15s ease;
   }
-  .del:hover { color: #ff6b7a; background: #fff0f2; }
+  .del:hover { color: #ff6b7a; background: #33222a; }
   .add-row { display: flex; gap: 10px; margin-top: 18px; }
   .add-row input {
-    flex: 1; border: 2px solid #dcefe3; border-radius: 12px; padding: 12px 14px;
-    font-size: 15px; outline: none; background: #f8fcfa; transition: border-color .2s ease;
+    flex: 1; border: 2px solid #333b49; border-radius: 12px; padding: 12px 14px;
+    font-size: 15px; outline: none; background: #12151b; color: #e6e9ef; transition: border-color .2s ease;
   }
   .add-row input:focus { border-color: #4caf7d; }
+  .add-row input::placeholder { color: #6b7686; }
   .add-row button {
     border: none; border-radius: 12px; padding: 0 20px; font-size: 15px; font-weight: 600;
     background: linear-gradient(90deg, #4caf7d, #6fd09a); color: #fff; cursor: pointer;
     transition: opacity .2s ease;
   }
   .add-row button:active { opacity: .8; }
-  .suggest-card {
-    border: 2px solid #dcefe3; border-radius: 14px;
-    background: #f6fbf8; padding: 14px 14px 12px; margin-bottom: 16px;
+  .add-row select {
+    border: 2px solid #333b49; border-radius: 12px; padding: 0 8px;
+    font-size: 14px; background: #12151b; color: #e6e9ef; outline: none; flex-shrink: 0;
+    height: 44px; max-width: 96px;
   }
-  .suggest-head { font-size: 13px; font-weight: 700; color: #4caf7d; margin-bottom: 8px; }
+  .group-title {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 14px; font-weight: 700; letter-spacing: 1px;
+    margin: 18px 0 4px; padding-top: 10px;
+    border-top: 1px dashed #2a303c;
+  }
+  .group-title:first-child { border-top: none; margin-top: 0; padding-top: 0; }
+  .group-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+  .suggest-card {
+    border: 2px solid #333b49; border-radius: 14px;
+    background: #161a21; padding: 14px 14px 12px; margin-bottom: 16px;
+  }
+  .suggest-head { font-size: 13px; font-weight: 700; color: #6fd09a; margin-bottom: 8px; }
   .suggest-body {
     display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-    min-height: 30px; padding: 8px 10px; background: #fff;
-    border: 1px dashed #c8e2d2; border-radius: 10px; font-size: 15px; margin-bottom: 10px;
+    min-height: 30px; padding: 8px 10px; background: #1b1f26;
+    border: 1px dashed #3a4454; border-radius: 10px; font-size: 15px; margin-bottom: 10px;
   }
-  .suggest-empty { color: #9db8aa; font-size: 14px; }
+  .suggest-empty { color: #7d8898; font-size: 14px; }
   .do-btn {
     margin-left: auto; border: none; border-radius: 9px; padding: 5px 14px;
     font-size: 13px; font-weight: 600; background: #4caf7d; color: #fff; cursor: pointer;
@@ -87,17 +102,17 @@
   }
   .do-btn:active { opacity: .75; }
   .suggest-controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-  .mode-label { font-size: 12px; color: #8aa89a; }
+  .mode-label { font-size: 12px; color: #7d8898; }
   .mode-btn {
-    border: 1.5px solid #c8e2d2; background: #fff; color: #6f927e;
+    border: 1.5px solid #3a4454; background: #1b1f26; color: #9aa5b4;
     border-radius: 8px; padding: 3px 12px; font-size: 12.5px; cursor: pointer; transition: all .15s ease;
   }
   .mode-btn.active { background: #4caf7d; border-color: #4caf7d; color: #fff; font-weight: 600; }
   .pick-row select {
-    border: 1.5px solid #c8e2d2; background: #fff; color: #33543f;
+    border: 1.5px solid #3a4454; background: #1b1f26; color: #dbe2ec;
     border-radius: 8px; padding: 3px 8px; font-size: 12.5px; outline: none;
   }
-  .hint { font-size: 12px; color: #a4b9ad; margin-top: 14px; text-align: center; }
+  .hint { font-size: 12px; color: #6b7686; margin-top: 14px; text-align: center; }
   .tag {
     display: inline-block; font-size: 12px; color: #fff; border-radius: 6px;
     padding: 1px 8px; margin-right: 8px; vertical-align: 1px; flex-shrink: 0;
@@ -126,7 +141,17 @@
   </div>
   <ul id="list"></ul>
   <div class="add-row">
-    <input id="newItem" type="text" placeholder="添加作业，如：数学：练习册P10" maxlength="60">
+    <select id="newSubject" aria-label="选择科目">
+      <option value="">科目</option>
+      <option value="语文">语文</option>
+      <option value="数学">数学</option>
+      <option value="英语">英语</option>
+      <option value="历史">历史</option>
+      <option value="政治">政治</option>
+      <option value="化学">化学</option>
+      <option value="物理">物理</option>
+    </select>
+    <input id="newItem" type="text" placeholder="输入作业内容" maxlength="60">
     <button id="addBtn">添加</button>
   </div>
   <div class="hint">点击条目旁的 × 可删除作业</div>
@@ -134,7 +159,7 @@
 <script>
 (function(){
   var KEY = 'hw-list-2026-09-29';
-  var COLORS = { '历史': '#9a7bd6', '化学': '#4aa3a3', '语文': '#c2579a', '英语': '#3fa86b', '政治': '#d0566e' };
+  var COLORS = { '历史': '#9a7bd6', '化学': '#4aa3a3', '语文': '#c2579a', '英语': '#3fa86b', '政治': '#d0566e', '数学': '#4a7bd6', '物理': '#e08a3c' };
   var items = [];
   try { items = JSON.parse(localStorage.getItem(KEY)) || null; } catch(e) { items = null; }
   if (!items) {
@@ -287,39 +312,55 @@
     suggest();
   });
 
+  var SUBJECT_ORDER = ['语文','数学','英语','历史','政治','化学','物理'];
+
   function render(){
     list.innerHTML = '';
     var done = 0;
-    items.forEach(function(item, idx){
-      if(item.done) done++;
-      var li = document.createElement('li');
-      if(item.done) li.className = 'done';
-      var check = document.createElement('span');
-      check.className = 'check';
-      check.setAttribute('aria-label','完成');
-      check.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12.5 9.5 18 20 6.5"/></svg>';
-      check.addEventListener('click', function(){ toggleDone(idx); });
-      var text = document.createElement('span');
-      text.className = 'text';
-      if(item.subject){
-        var tag = document.createElement('span');
-        tag.className = 'tag';
-        tag.style.background = COLORS[item.subject] || '#999';
-        tag.textContent = item.subject;
-        text.appendChild(tag);
-      }
-      text.appendChild(document.createTextNode(item.text));
-      text.addEventListener('click', function(){ toggleDone(idx); });
-      var del = document.createElement('button');
-      del.className = 'del';
-      del.innerHTML = '×';
-      del.setAttribute('aria-label','删除');
-      del.addEventListener('click', function(){ items.splice(idx,1); save(); render(); });
-      li.appendChild(check);
-      li.appendChild(text);
-      li.appendChild(del);
-      list.appendChild(li);
+    // 按科目分组：同科作业聚在一起，顺序固定 语数英史政化+物理，最后"其他"
+    var groups = {};
+    items.forEach(function(item){
+      var s = item.subject || '其他';
+      if(!groups[s]) groups[s] = [];
+      groups[s].push(item);
     });
+    function renderGroup(sub){
+      var arr = groups[sub];
+      if(!arr || !arr.length) return;
+      var title = document.createElement('div');
+      title.className = 'group-title';
+      var dot = document.createElement('span');
+      dot.className = 'group-dot';
+      dot.style.background = COLORS[sub] || '#6b7686';
+      title.appendChild(dot);
+      title.appendChild(document.createTextNode(sub));
+      list.appendChild(title);
+      arr.forEach(function(item, i){
+        if(item.done) done++;
+        var li = document.createElement('li');
+        if(item.done) li.className = 'done';
+        var check = document.createElement('span');
+        check.className = 'check';
+        check.setAttribute('aria-label','完成');
+        check.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12.5 9.5 18 20 6.5"/></svg>';
+        check.addEventListener('click', function(){ toggleDone(items.indexOf(item)); });
+        var text = document.createElement('span');
+        text.className = 'text';
+        text.appendChild(document.createTextNode(item.text));
+        text.addEventListener('click', function(){ toggleDone(items.indexOf(item)); });
+        var del = document.createElement('button');
+        del.className = 'del';
+        del.innerHTML = '×';
+        del.setAttribute('aria-label','删除');
+        del.addEventListener('click', function(){ items.splice(items.indexOf(item),1); save(); render(); });
+        li.appendChild(check);
+        li.appendChild(text);
+        li.appendChild(del);
+        list.appendChild(li);
+      });
+    }
+    SUBJECT_ORDER.forEach(renderGroup);
+    renderGroup('其他');
     var pct = items.length ? Math.round(done/items.length*100) : 0;
     bar.style.width = pct + '%';
     ptext.textContent = items.length ? '已完成 ' + done + ' / ' + items.length + ' 项' : '还没有作业';
@@ -339,8 +380,10 @@
   function add(){
     var v = input.value.trim();
     if(!v) return;
-    items.push({ text: v, done: false });
+    var subject = document.getElementById('newSubject').value || '';
+    items.push({ text: v, subject: subject, done: false });
     input.value = '';
+    document.getElementById('newSubject').value = '';
     save();
     render();
     input.focus();
