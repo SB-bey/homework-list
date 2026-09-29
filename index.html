@@ -158,20 +158,22 @@
 </div>
 <script>
 (function(){
-  var KEY = 'hw-list-2026-09-29';
+  var KEY = 'hw-list-2026-09-29b';
   var COLORS = { '历史': '#9a7bd6', '化学': '#4aa3a3', '语文': '#c2579a', '英语': '#3fa86b', '政治': '#d0566e', '数学': '#4a7bd6', '物理': '#e08a3c' };
   var items = [];
   try { items = JSON.parse(localStorage.getItem(KEY)) || null; } catch(e) { items = null; }
   if (!items) {
     items = [
-      { text: '第3课', subject: '历史', done: false },
-      { text: '21~22页', subject: '化学', done: false },
-      { text: '第1课两页', subject: '语文', done: false },
-      { text: '最后一自然段抄一背', subject: '英语', done: false },
-      { text: '基础训练下一课时', done: false },
-      { text: '12个短语', done: false },
-      { text: '基训 30~31页', subject: '政治', done: false },
-      { text: '基训 3~15页', subject: '政治', done: false }
+      { text: '背以及续写12两段', subject: '英语', done: false },
+      { text: '基础训练下一课时', subject: '英语', done: false },
+      { text: '12个短语', subject: '英语', done: false },
+      { text: '书上题写完（T6、7、8、9）', subject: '数学', done: false },
+      { text: 'P43 T2、3', subject: '数学', done: false },
+      { text: '《基》第3课', subject: '历史', done: false },
+      { text: '《基》P3、P4', subject: '语文', done: false },
+      { text: '33~34页', subject: '政治', done: false },
+      { text: '试卷写完', subject: '化学', done: false },
+      { text: '37~38页', subject: '物理', done: false }
     ];
     save();
   }
