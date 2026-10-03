@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="favicon.png">
-<title>作业清单 · 9月29日</title>
+<title>作业清单 · 10月3日</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
@@ -123,7 +123,7 @@
 <div class="card">
   <div class="header">
     <h1>📋 作业清单</h1>
-    <span class="date">9月29日 周二</span>
+    <span class="date">10月3日 周六 · 国庆假期</span>
   </div>
   <div class="sub">点一下条目即可划掉，完成进度自动保存</div>
   <div class="progress-wrap"><div class="progress-bar" id="bar"></div></div>
@@ -158,22 +158,29 @@
 </div>
 <script>
 (function(){
-  var KEY = 'hw-list-2026-09-29b';
+  var KEY = 'hw-list-2026-10-03';
   var COLORS = { '历史': '#9a7bd6', '化学': '#4aa3a3', '语文': '#c2579a', '英语': '#3fa86b', '政治': '#d0566e', '数学': '#4a7bd6', '物理': '#e08a3c' };
   var items = [];
   try { items = JSON.parse(localStorage.getItem(KEY)) || null; } catch(e) { items = null; }
   if (!items) {
     items = [
-      { text: '背以及续写12两段', subject: '英语', done: false },
-      { text: '基础训练下一课时', subject: '英语', done: false },
-      { text: '12个短语', subject: '英语', done: false },
-      { text: '书上题写完（T6、7、8、9）', subject: '数学', done: false },
-      { text: 'P43 T2、3', subject: '数学', done: false },
-      { text: '《基》第3课', subject: '历史', done: false },
-      { text: '《基》P3、P4', subject: '语文', done: false },
-      { text: '33~34页', subject: '政治', done: false },
-      { text: '试卷写完', subject: '化学', done: false },
-      { text: '37~38页', subject: '物理', done: false }
+      { text: '试卷×2', subject: '化学', done: false },
+      { text: '《基》写到12页', subject: '语文', done: false },
+      { text: '简爱有感600字', subject: '语文', done: false },
+      { text: '13、14课+课外古诗', subject: '语文', done: false },
+      { text: '试卷×1', subject: '数学', done: false },
+      { text: '《基》12-16', subject: '数学', done: false },
+      { text: '试卷×1（作文档）', subject: '英语', done: false },
+      { text: '4、5两段', subject: '英语', done: false },
+      { text: '听写 Unit1 Unit2 单词前13个', subject: '英语', done: false },
+      { text: '背诵 试卷', subject: '英语', done: false },
+      { text: '《基》33-34', subject: '政治', done: false },
+      { text: '自主默写', subject: '政治', done: false },
+      { text: '试卷×3', subject: '政治', done: false },
+      { text: '《基》1、2、11课', subject: '历史', done: false },
+      { text: '试卷×2', subject: '历史', done: false },
+      { text: '《基》25-26', subject: '物理', done: false },
+      { text: '试卷', subject: '物理', done: false }
     ];
     save();
   }
