@@ -58,6 +58,14 @@
     display: inline-flex; align-items: center; justify-content: center; transition: all .15s ease;
   }
   .del:hover { color: #ff6b7a; background: #33222a; }
+  .skip {
+    flex-shrink: 0; border: 1px solid #3a4454; background: #1b1f26; color: #9aa5b4;
+    border-radius: 8px; padding: 2px 8px; font-size: 12px; cursor: pointer;
+    transition: all .15s ease; line-height: 1.7;
+  }
+  .skip:hover { color: #ffd479; border-color: #ffd479; background: #2a2418; }
+  li.skipped .text { opacity: .45; font-style: italic; text-decoration: line-through; text-decoration-style: dotted; text-decoration-color: #555f6e; }
+  li.skipped .check { border-color: #3a4454; opacity: .5; }
   .add-row { display: flex; gap: 10px; margin-top: 18px; }
   .add-row input {
     flex: 1; border: 2px solid #333b49; border-radius: 12px; padding: 12px 14px;
@@ -154,7 +162,7 @@
     <input id="newItem" type="text" placeholder="输入作业内容" maxlength="60">
     <button id="addBtn">添加</button>
   </div>
-  <div class="hint">点击条目旁的 × 可删除作业</div>
+  <div class="hint">点击条目旁的 × 删除，点「跳过」暂时放后面，点文字/方块划掉完成</div>
 </div>
 <script>
 (function(){
@@ -201,15 +209,18 @@
   function pickableSubjects(){
     var subs = [];
     items.forEach(function(it){
-      if(!it.done && it.subject && subs.indexOf(it.subject) === -1) subs.push(it.subject);
+      if(!it.done && !it.skipped && it.subject && subs.indexOf(it.subject) === -1) subs.push(it.subject);
     });
     return subs;
   }
 
   function suggest(){
-    var undone = items.filter(function(it){ return !it.done; });
+    var undone = items.filter(function(it){ return !it.done && !it.skipped; });
     if(!undone.length){
-      suggestBody.innerHTML = '<span class="suggest-empty">🎉 全部写完啦，可以休息了！</span>';
+      var sk = items.filter(function(it){ return it.skipped; }).length;
+      suggestBody.innerHTML = sk
+        ? '<span class="suggest-empty">🎉 待做的写完啦，还有 ' + sk + ' 项跳过的可以「恢复」</span>'
+        : '<span class="suggest-empty">🎉 全部写完啦，可以休息了！</span>';
       suggestHead.textContent = '🎯 下一个建议写';
       return;
     }
@@ -334,7 +345,7 @@
       groups[s].push(item);
     });
     function renderGroup(sub){
-      var arr = groups[sub];
+      var arr = groups[sub].slice().sort(function(a,b){ return (a.skipped?1:0) - (b.skipped?1:0); });
       if(!arr || !arr.length) return;
       var title = document.createElement('div');
       title.className = 'group-title';
@@ -348,6 +359,7 @@
         if(item.done) done++;
         var li = document.createElement('li');
         if(item.done) li.className = 'done';
+        else if(item.skipped) li.className = 'skipped';
         var check = document.createElement('span');
         check.className = 'check';
         check.setAttribute('aria-label','完成');
@@ -357,6 +369,11 @@
         text.className = 'text';
         text.appendChild(document.createTextNode(item.text));
         text.addEventListener('click', function(){ toggleDone(items.indexOf(item)); });
+        var skip = document.createElement('button');
+        skip.className = 'skip';
+        skip.textContent = item.skipped ? '恢复' : '跳过';
+        skip.setAttribute('aria-label','暂时跳过');
+        skip.addEventListener('click', function(){ toggleSkip(items.indexOf(item)); });
         var del = document.createElement('button');
         del.className = 'del';
         del.innerHTML = '×';
@@ -364,6 +381,7 @@
         del.addEventListener('click', function(){ items.splice(items.indexOf(item),1); save(); render(); });
         li.appendChild(check);
         li.appendChild(text);
+        li.appendChild(skip);
         li.appendChild(del);
         list.appendChild(li);
       });
@@ -386,11 +404,17 @@
     save(); render();
   }
 
+  function toggleSkip(idx){
+    items[idx].skipped = !items[idx].skipped;
+    if(items[idx].skipped) items[idx].done = false;
+    save(); render();
+  }
+
   function add(){
     var v = input.value.trim();
     if(!v) return;
     var subject = document.getElementById('newSubject').value || '';
-    items.push({ text: v, subject: subject, done: false });
+    items.push({ text: v, subject: subject, done: false, skipped: false });
     input.value = '';
     document.getElementById('newSubject').value = '';
     save();
