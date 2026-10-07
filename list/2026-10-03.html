@@ -132,16 +132,6 @@
   .photo-head { font-size: 13px; font-weight: 700; color: #6fd09a; margin-bottom: 8px; }
   .photo-card a { display: block; }
   .photo-card img { width: 100%; border-radius: 10px; display: block; cursor: zoom-in; }
-  .archive-card {
-    border: 2px solid #333b49; border-radius: 14px;
-    background: #161a21; padding: 12px; margin-bottom: 16px;
-  }
-  .archive-head { font-size: 13px; font-weight: 700; color: #6fd09a; margin-bottom: 8px; }
-  .archive-card a {
-    display: inline-block; color: #9fc9e8; font-size: 14px;
-    margin: 0 14px 6px 0; text-decoration: none; transition: color .15s ease;
-  }
-  .archive-card a:hover { color: #fff; text-decoration: underline; }
 </style>
 </head>
 <body>
@@ -163,10 +153,6 @@
       <span class="mode-label" style="margin-left:4px">指定科目</span>
       <select id="pickSubject"><option value="">自动</option></select>
     </div>
-  </div>
-  <div class="archive-card" id="archiveCard" style="display:none">
-    <div class="archive-head">📁 历史清单（每天存档）</div>
-    <div id="archiveList"></div>
   </div>
   <div class="photo-card" id="photoCard" style="display:none">
     <div class="photo-head">📷 作业原图 · 看不清点开看大图</div>
@@ -193,9 +179,8 @@
 </div>
 <script>
 (function(){
-  var KEY = 'hw-list-2026-10-03';
+  var KEY = 'hw-archive-2026-10-03';
   var PHOTO = 'photos/2026-10-03.jpg';   // 当天作业原图，没有照片就留空 ''
-  var ARCHIVE = [ {file:'2026-10-03', label:'10月3日 周六'} ];  // 历史存档列表，每晚新增一行
   var COLORS = { '历史': '#9a7bd6', '化学': '#4aa3a3', '语文': '#c2579a', '英语': '#3fa86b', '政治': '#d0566e', '数学': '#4a7bd6', '物理': '#e08a3c' };
   var items = [];
   try { items = JSON.parse(localStorage.getItem(KEY)) || null; } catch(e) { items = null; }
@@ -466,19 +451,6 @@
     photoImg.src = PHOTO;
     photoLink.href = PHOTO;
     photoCard.style.display = 'block';
-  }
-
-  // 历史存档列表
-  if(ARCHIVE.length){
-    var archiveCard = document.getElementById('archiveCard');
-    var archiveList = document.getElementById('archiveList');
-    ARCHIVE.forEach(function(a){
-      var lnk = document.createElement('a');
-      lnk.href = 'list/' + a.file + '.html';
-      lnk.textContent = a.label;
-      archiveList.appendChild(lnk);
-    });
-    archiveCard.style.display = 'block';
   }
 
   render();
