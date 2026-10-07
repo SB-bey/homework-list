@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-07",
+  "label": "10月7日 周三",
+  "key": "hw-list-2026-10-07",
+  "photo": "",
+  "items": [
+    { "text": "在这里填作业内容", "subject": "语文", "done": false },
+    { "text": "在这里填作业内容", "subject": "数学", "done": false }
+  ]
+}
