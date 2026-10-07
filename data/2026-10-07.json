@@ -1,0 +1,26 @@
+{
+"date": "2026-10-07",
+"label": "10月7日 周三",
+"key": "hw-list-2026-10-07",
+"photo": "",
+"items": [
+{ "text": "试卷×2", "subject": "化学", "done": false },
+{ "text": "《基》写到12页", "subject": "语文", "done": false },
+{ "text": "简爱有感600字", "subject": "语文", "done": false },
+{ "text": "13、14课古诗文", "subject": "语文", "done": false },
+{ "text": "试卷×1", "subject": "数学", "done": false },
+{ "text": "《基》12-18", "subject": "数学", "done": false },
+{ "text": "试卷×1（作文写好）", "subject": "英语", "done": false },
+{ "text": "4、5两段", "subject": "英语", "done": false },
+{ "text": "听写Unit1 Unit2 13个单词", "subject": "英语", "done": false },
+{ "text": "《基》33-34", "subject": "政治", "done": false },
+{ "text": "做补题集", "subject": "政治", "done": false },
+{ "text": "试卷×3", "subject": "政治", "done": false },
+{ "text": "《基》1、2、11课", "subject": "历史", "done": false },
+{ "text": "试卷×2", "subject": "历史", "done": false },
+{ "text": "《基》25-26", "subject": "物理", "done": false },
+{ "text": "试卷", "subject": "物理", "done": false },
+{ "text": "手写", "subject": "生物", "done": false },
+{ "text": "试j卷", "subject": "生物", "done": false }
+]
+}
