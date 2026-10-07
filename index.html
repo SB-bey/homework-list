@@ -125,6 +125,13 @@
     display: inline-block; font-size: 12px; color: #fff; border-radius: 6px;
     padding: 1px 8px; margin-right: 8px; vertical-align: 1px; flex-shrink: 0;
   }
+  .photo-card {
+    border: 2px solid #333b49; border-radius: 14px;
+    background: #161a21; padding: 12px; margin-bottom: 16px;
+  }
+  .photo-head { font-size: 13px; font-weight: 700; color: #6fd09a; margin-bottom: 8px; }
+  .photo-card a { display: block; }
+  .photo-card img { width: 100%; border-radius: 10px; display: block; cursor: zoom-in; }
 </style>
 </head>
 <body>
@@ -147,6 +154,12 @@
       <select id="pickSubject"><option value="">自动</option></select>
     </div>
   </div>
+  <div class="photo-card" id="photoCard" style="display:none">
+    <div class="photo-head">📷 作业原图 · 看不清点开看大图</div>
+    <a id="photoLink" href="#" target="_blank" rel="noopener">
+      <img id="photoImg" src="" alt="作业原图">
+    </a>
+  </div>
   <ul id="list"></ul>
   <div class="add-row">
     <select id="newSubject" aria-label="选择科目">
@@ -167,6 +180,7 @@
 <script>
 (function(){
   var KEY = 'hw-list-2026-10-03';
+  var PHOTO = 'photos/2026-10-03.jpg';   // 当天作业原图，没有照片就留空 ''
   var COLORS = { '历史': '#9a7bd6', '化学': '#4aa3a3', '语文': '#c2579a', '英语': '#3fa86b', '政治': '#d0566e', '数学': '#4a7bd6', '物理': '#e08a3c' };
   var items = [];
   try { items = JSON.parse(localStorage.getItem(KEY)) || null; } catch(e) { items = null; }
@@ -428,6 +442,16 @@
   }
   document.getElementById('addBtn').addEventListener('click', add);
   input.addEventListener('keydown', function(e){ if(e.key === 'Enter') add(); });
+
+  // 作业原图：有照片就显示
+  if(PHOTO){
+    var photoCard = document.getElementById('photoCard');
+    var photoImg = document.getElementById('photoImg');
+    var photoLink = document.getElementById('photoLink');
+    photoImg.src = PHOTO;
+    photoLink.href = PHOTO;
+    photoCard.style.display = 'block';
+  }
 
   render();
 })();
