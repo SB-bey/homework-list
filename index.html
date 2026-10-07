@@ -58,12 +58,12 @@
     display: inline-flex; align-items: center; justify-content: center; transition: all .15s ease;
   }
   .del:hover { color: #ff6b7a; background: #33222a; }
-  .skip {
-    flex-shrink: 0; border: 1px solid #3a4454; background: #1b1f26; color: #9aa5b4;
-    border-radius: 8px; padding: 2px 8px; font-size: 12px; cursor: pointer;
-    transition: all .15s ease; line-height: 1.7;
+  .skip-btn {
+    border: 1.5px solid #3a4454; background: #1b1f26; color: #9aa5b4;
+    border-radius: 9px; padding: 5px 12px; font-size: 13px; cursor: pointer;
+    flex-shrink: 0; transition: all .15s ease;
   }
-  .skip:hover { color: #ffd479; border-color: #ffd479; background: #2a2418; }
+  .skip-btn:hover { color: #ffd479; border-color: #ffd479; background: #2a2418; }
   li.skipped .text { opacity: .45; font-style: italic; text-decoration: line-through; text-decoration-style: dotted; text-decoration-color: #555f6e; }
   li.skipped .check { border-color: #3a4454; opacity: .5; }
   .add-row { display: flex; gap: 10px; margin-top: 18px; }
@@ -162,7 +162,7 @@
     <input id="newItem" type="text" placeholder="输入作业内容" maxlength="60">
     <button id="addBtn">添加</button>
   </div>
-  <div class="hint">点击条目旁的 × 删除，点「跳过」暂时放后面，点文字/方块划掉完成</div>
+  <div class="hint">推荐不喜欢？点「跳过它」换一个推荐；列表里点条目/方块划掉完成</div>
 </div>
 <script>
 (function(){
@@ -290,6 +290,16 @@
       save(); render(); suggest();
     });
     suggestBody.appendChild(btn);
+    var skbtn = document.createElement('button');
+    skbtn.className = 'skip-btn';
+    skbtn.textContent = '跳过它 ⏭';
+    skbtn.setAttribute('aria-label','暂时跳过这项推荐');
+    skbtn.addEventListener('click', function(){
+      items[idx].skipped = true;
+      items[idx].done = false;
+      save(); render();
+    });
+    suggestBody.appendChild(skbtn);
   }
 
   function refreshSubjects(){
@@ -345,8 +355,9 @@
       groups[s].push(item);
     });
     function renderGroup(sub){
-      var arr = groups[sub].slice().sort(function(a,b){ return (a.skipped?1:0) - (b.skipped?1:0); });
+      var arr = groups[sub];
       if(!arr || !arr.length) return;
+      arr = arr.slice().sort(function(a,b){ return (a.skipped?1:0) - (b.skipped?1:0); });
       var title = document.createElement('div');
       title.className = 'group-title';
       var dot = document.createElement('span');
@@ -369,11 +380,6 @@
         text.className = 'text';
         text.appendChild(document.createTextNode(item.text));
         text.addEventListener('click', function(){ toggleDone(items.indexOf(item)); });
-        var skip = document.createElement('button');
-        skip.className = 'skip';
-        skip.textContent = item.skipped ? '恢复' : '跳过';
-        skip.setAttribute('aria-label','暂时跳过');
-        skip.addEventListener('click', function(){ toggleSkip(items.indexOf(item)); });
         var del = document.createElement('button');
         del.className = 'del';
         del.innerHTML = '×';
@@ -381,7 +387,6 @@
         del.addEventListener('click', function(){ items.splice(items.indexOf(item),1); save(); render(); });
         li.appendChild(check);
         li.appendChild(text);
-        li.appendChild(skip);
         li.appendChild(del);
         list.appendChild(li);
       });
