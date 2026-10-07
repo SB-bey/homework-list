@@ -179,33 +179,10 @@
 </div>
 <script>
 (function(){
-  var KEY = 'hw-list-2026-10-03';
-  var PHOTO = 'photos/2026-10-03.jpg';   // 当天作业原图，没有照片就留空 ''
+  var KEY = '';
+  var PHOTO = '';   // 当天作业原图，没有照片就留空 ''
   var COLORS = { '历史': '#9a7bd6', '化学': '#4aa3a3', '语文': '#c2579a', '英语': '#3fa86b', '政治': '#d0566e', '数学': '#4a7bd6', '物理': '#e08a3c' };
   var items = [];
-  try { items = JSON.parse(localStorage.getItem(KEY)) || null; } catch(e) { items = null; }
-  if (!items) {
-    items = [
-      { text: '试卷×2', subject: '化学', done: false },
-      { text: '《基》写到12页', subject: '语文', done: false },
-      { text: '简爱有感600字', subject: '语文', done: false },
-      { text: '13、14课+课外古诗', subject: '语文', done: false },
-      { text: '试卷×1', subject: '数学', done: false },
-      { text: '《基》12-16', subject: '数学', done: false },
-      { text: '试卷×1（作文档）', subject: '英语', done: false },
-      { text: '4、5两段', subject: '英语', done: false },
-      { text: '听写 Unit1 Unit2 单词前13个', subject: '英语', done: false },
-      { text: '背诵 试卷', subject: '英语', done: false },
-      { text: '《基》33-34', subject: '政治', done: false },
-      { text: '自主默写', subject: '政治', done: false },
-      { text: '试卷×3', subject: '政治', done: false },
-      { text: '《基》1、2、11课', subject: '历史', done: false },
-      { text: '试卷×2', subject: '历史', done: false },
-      { text: '《基》25-26', subject: '物理', done: false },
-      { text: '试卷', subject: '物理', done: false }
-    ];
-    save();
-  }
 
   var list = document.getElementById('list');
   var input = document.getElementById('newItem');
@@ -216,7 +193,7 @@
   var pickSubject = document.getElementById('pickSubject');
   var mode = 'group';   // 'group' 同科优先 | 'random' 随机
   var pick = '';        // '' 自动 | 科目名
-  var lastSubject = localStorage.getItem(KEY + '-last') || '';  // 记住正在写的科目
+  var lastSubject = '';  // 记住正在写的科目
 
   function save(){ localStorage.setItem(KEY, JSON.stringify(items)); }
 
@@ -443,17 +420,33 @@
   document.getElementById('addBtn').addEventListener('click', add);
   input.addEventListener('keydown', function(e){ if(e.key === 'Enter') add(); });
 
-  // 作业原图：有照片就显示
-  if(PHOTO){
-    var photoCard = document.getElementById('photoCard');
-    var photoImg = document.getElementById('photoImg');
-    var photoLink = document.getElementById('photoLink');
-    photoImg.src = PHOTO;
-    photoLink.href = PHOTO;
-    photoCard.style.display = 'block';
-  }
-
-  render();
+  // 从仓库数据文件调取当天作业（data/latest.json 每晚更新指向最新一天）
+  fetch('data/latest.json?v=' + Date.now())
+    .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function(d){
+      KEY = d.key || 'hw-list';
+      PHOTO = d.photo || '';
+      document.querySelector('.date').textContent = d.label || '';
+      try { items = JSON.parse(localStorage.getItem(KEY)) || null; } catch(e) { items = null; }
+      if(!items){
+        items = d.items || [];
+        save();
+      }
+      lastSubject = localStorage.getItem(KEY + '-last') || '';
+      // 作业原图：有照片就显示
+      if(PHOTO){
+        var photoCard = document.getElementById('photoCard');
+        var photoImg = document.getElementById('photoImg');
+        var photoLink = document.getElementById('photoLink');
+        photoImg.src = PHOTO;
+        photoLink.href = PHOTO;
+        photoCard.style.display = 'block';
+      }
+      render();
+    })
+    .catch(function(){
+      ptext.textContent = '⚠️ 暂时拉不到作业数据，刷新一下试试';
+    });
 })();
 </script>
 </body>

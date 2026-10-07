@@ -1,0 +1,25 @@
+{
+  "date": "2026-10-03",
+  "label": "10月3日 周六 · 国庆假期",
+  "key": "hw-list-2026-10-03",
+  "photo": "photos/2026-10-03.jpg",
+  "items": [
+    { "text": "试卷×2", "subject": "化学", "done": false },
+    { "text": "《基》写到12页", "subject": "语文", "done": false },
+    { "text": "简爱有感600字", "subject": "语文", "done": false },
+    { "text": "13、14课+课外古诗", "subject": "语文", "done": false },
+    { "text": "试卷×1", "subject": "数学", "done": false },
+    { "text": "《基》12-16", "subject": "数学", "done": false },
+    { "text": "试卷×1（作文档）", "subject": "英语", "done": false },
+    { "text": "4、5两段", "subject": "英语", "done": false },
+    { "text": "听写 Unit1 Unit2 单词前13个", "subject": "英语", "done": false },
+    { "text": "背诵 试卷", "subject": "英语", "done": false },
+    { "text": "《基》33-34", "subject": "政治", "done": false },
+    { "text": "自主默写", "subject": "政治", "done": false },
+    { "text": "试卷×3", "subject": "政治", "done": false },
+    { "text": "《基》1、2、11课", "subject": "历史", "done": false },
+    { "text": "试卷×2", "subject": "历史", "done": false },
+    { "text": "《基》25-26", "subject": "物理", "done": false },
+    { "text": "试卷", "subject": "物理", "done": false }
+  ]
+}
