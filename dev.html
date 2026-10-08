@@ -29,6 +29,17 @@
     --danger: #C9544E;
     --danger-soft: #FBEFEE;
 
+    /* 发光颜色（RGB 分量，供 rgb() 使用） */
+    --glow-rgb: 217 119 87;
+
+    /* 液态玻璃 */
+    --glass-bg-hi: rgba(255, 255, 255, 0.78);
+    --glass-bg-lo: rgba(255, 255, 255, 0.34);
+    --glass-edge: rgba(255, 255, 255, 0.85);
+    --glass-top: rgba(255, 255, 255, 0.72);
+    --glass-inner: rgba(255, 255, 255, 0.28);
+    --glass-drop: rgba(0, 0, 0, 0.09);
+
     --r-card: 26px;
     --r-md: 16px;
     --r-sm: 11px;
@@ -61,6 +72,15 @@
 
       --danger: #E58480;
       --danger-soft: #2E2222;
+
+      --glow-rgb: 224 138 107;
+
+      --glass-bg-hi: rgba(255, 255, 255, 0.17);
+      --glass-bg-lo: rgba(255, 255, 255, 0.045);
+      --glass-edge: rgba(255, 255, 255, 0.22);
+      --glass-top: rgba(255, 255, 255, 0.28);
+      --glass-inner: rgba(255, 255, 255, 0.07);
+      --glass-drop: rgba(0, 0, 0, 0.42);
 
       --shadow-card:
         0 1px 2px rgba(0, 0, 0, 0.25),
@@ -113,7 +133,7 @@
 
   :focus-visible {
     outline: 2px solid var(--accent);
-    outline-offset: 2px;
+    outline-offset: 3px;
     border-radius: 6px;
   }
 
@@ -192,12 +212,53 @@
     margin-bottom: 20px;
   }
 
-  /* ========== 建议卡片 ========== */
+  /* ========== 建议卡片（含向外发光） ========== */
   .suggest {
+    position: relative;
     background: var(--accent-soft);
     border-radius: var(--r-md);
     padding: 16px;
     margin-bottom: 18px;
+    box-shadow:
+      0 0 0 0.5px rgb(var(--glow-rgb) / 0.06),
+      0 0 20px -4px rgb(var(--glow-rgb) / 0.16),
+      0 0 46px -10px rgb(var(--glow-rgb) / 0.10);
+    animation: suggestGlow 4.5s var(--ease) infinite;
+  }
+
+  @keyframes suggestGlow {
+    0%, 100% {
+      box-shadow:
+        0 0 0 0.5px rgb(var(--glow-rgb) / 0.06),
+        0 0 18px -4px rgb(var(--glow-rgb) / 0.14),
+        0 0 40px -10px rgb(var(--glow-rgb) / 0.08);
+    }
+    50% {
+      box-shadow:
+        0 0 0 0.5px rgb(var(--glow-rgb) / 0.14),
+        0 0 30px -2px rgb(var(--glow-rgb) / 0.28),
+        0 0 66px -6px rgb(var(--glow-rgb) / 0.16);
+    }
+  }
+
+  /* 点击脉冲（向外扩散一圈光） */
+  .suggest::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    box-shadow: 0 0 52px 10px rgb(var(--glow-rgb) / 0.5);
+    opacity: 0;
+  }
+
+  .suggest.pulse::after {
+    animation: suggestPulse 0.78s var(--ease-out);
+  }
+
+  @keyframes suggestPulse {
+    0%   { opacity: 0.85; transform: scale(1); }
+    100% { opacity: 0;    transform: scale(1.045); }
   }
 
   .suggest-head {
@@ -268,8 +329,13 @@
     white-space: nowrap;
   }
 
-  /* ========== 按钮 ========== */
+  /* ============================================================
+     液态玻璃按钮
+     ============================================================ */
   .btn {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
     height: 40px;
     padding: 0 18px;
     border-radius: var(--r-sm);
@@ -279,34 +345,79 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    white-space: nowrap;
+    -webkit-backdrop-filter: blur(18px) saturate(180%);
+    backdrop-filter: blur(18px) saturate(180%);
     transition:
       transform 0.18s var(--spring),
       background-color 0.2s var(--ease),
+      box-shadow 0.28s var(--ease),
       color 0.2s var(--ease),
-      border-color 0.2s var(--ease),
-      opacity 0.2s var(--ease);
-    white-space: nowrap;
+      filter 0.2s var(--ease);
   }
 
   .btn:active { transform: scale(0.965); }
 
+  /* ---- 主按钮：彩色玻璃 ---- */
   .btn-primary {
-    background: var(--accent);
     color: #FFFFFF;
+    background:
+      linear-gradient(180deg,
+        rgba(255, 255, 255, 0.46) 0%,
+        rgba(255, 255, 255, 0.10) 42%,
+        rgba(255, 255, 255, 0) 58%),
+      linear-gradient(160deg,
+        var(--accent) 0%,
+        var(--accent-press) 100%);
+    box-shadow:
+      inset 0 0 0 0.5px rgba(255, 255, 255, 0.42),
+      inset 0 1px 0.5px rgba(255, 255, 255, 0.78),
+      inset 0 -1px 1px rgba(0, 0, 0, 0.10),
+      inset 0 0 18px rgba(255, 255, 255, 0.16),
+      0 1px 2px rgba(0, 0, 0, 0.06),
+      0 6px 18px -5px rgb(var(--glow-rgb) / 0.55);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.12);
   }
 
-  .btn-primary:active { background: var(--accent-press); }
+  /* 玻璃反光扫过 */
+  .btn-primary::after {
+    content: '';
+    position: absolute;
+    top: -70%;
+    left: -80%;
+    width: 48%;
+    height: 240%;
+    background: linear-gradient(100deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.16) 34%,
+      rgba(255, 255, 255, 0.62) 50%,
+      rgba(255, 255, 255, 0.16) 66%,
+      transparent 100%);
+    transform: rotate(14deg);
+    pointer-events: none;
+    animation: sheen 5.6s var(--ease) infinite;
+  }
 
+  @keyframes sheen {
+    0%, 60%   { left: -80%; }
+    84%, 100% { left: 140%; }
+  }
+
+  /* ---- 幽灵按钮：中性玻璃 ---- */
   .btn-ghost {
-    background: rgba(0, 0, 0, 0.045);
     color: var(--text-2);
+    background:
+      linear-gradient(180deg,
+        var(--glass-bg-hi) 0%,
+        var(--glass-bg-lo) 100%);
+    box-shadow:
+      inset 0 0 0 0.5px var(--glass-edge),
+      inset 0 1px 0.5px var(--glass-top),
+      inset 0 -1px 1px rgba(0, 0, 0, 0.04),
+      inset 0 0 14px var(--glass-inner),
+      0 1px 2px var(--glass-drop),
+      0 4px 12px -5px var(--glass-drop);
   }
-
-  @media (prefers-color-scheme: dark) {
-    .btn-ghost { background: rgba(255, 255, 255, 0.07); }
-  }
-
-  .btn-ghost:active { background: rgba(0, 0, 0, 0.09); }
 
   /* ========== 控制条 ========== */
   .suggest-controls {
@@ -316,7 +427,7 @@
     gap: 7px;
     margin-top: 13px;
     padding-top: 13px;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid rgb(var(--glow-rgb) / 0.12);
   }
 
   .mode-label {
@@ -325,30 +436,53 @@
     letter-spacing: 0.02em;
   }
 
+  /* ---- 模式胶囊：小号液态玻璃 ---- */
   .mode-btn {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
     height: 30px;
     padding: 0 13px;
     border-radius: 999px;
     font-size: 12.5px;
     font-weight: 500;
     color: var(--text-2);
-    background: rgba(0, 0, 0, 0.045);
+    background:
+      linear-gradient(180deg,
+        var(--glass-bg-hi) 0%,
+        var(--glass-bg-lo) 100%);
+    -webkit-backdrop-filter: blur(12px) saturate(160%);
+    backdrop-filter: blur(12px) saturate(160%);
+    box-shadow:
+      inset 0 0 0 0.5px var(--glass-edge),
+      inset 0 1px 0.5px var(--glass-top),
+      inset 0 -1px 1px rgba(0, 0, 0, 0.04),
+      0 1px 2px var(--glass-drop);
     transition:
+      transform 0.18s var(--spring),
       background-color 0.22s var(--ease),
-      color 0.22s var(--ease),
-      transform 0.18s var(--spring);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .mode-btn { background: rgba(255, 255, 255, 0.07); }
+      box-shadow 0.28s var(--ease),
+      color 0.22s var(--ease);
   }
 
   .mode-btn:active { transform: scale(0.94); }
 
   .mode-btn.active {
-    background: var(--accent);
     color: #FFFFFF;
+    background:
+      linear-gradient(180deg,
+        rgba(255, 255, 255, 0.44) 0%,
+        rgba(255, 255, 255, 0.06) 55%),
+      linear-gradient(160deg,
+        var(--accent) 0%,
+        var(--accent-press) 100%);
+    box-shadow:
+      inset 0 0 0 0.5px rgba(255, 255, 255, 0.38),
+      inset 0 1px 0.5px rgba(255, 255, 255, 0.72),
+      inset 0 -1px 1px rgba(0, 0, 0, 0.10),
+      0 2px 10px -2px rgb(var(--glow-rgb) / 0.55);
     font-weight: 600;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.10);
   }
 
   select {
@@ -440,7 +574,6 @@
 
   li.item + li.item { border-top: 1px solid var(--border); }
 
-  /* 复选框 */
   .check {
     position: relative;
     width: 22px;
@@ -488,7 +621,6 @@
     transform: scale(1);
   }
 
-  /* 文本 */
   .text {
     flex: 1;
     min-width: 0;
@@ -517,8 +649,11 @@
 
   li.item.skipped .check { opacity: 0.45; }
 
-  /* 恢复按钮 */
+  /* ---- 恢复按钮：小号玻璃 ---- */
   .restore {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
     flex-shrink: 0;
     height: 28px;
     padding: 0 11px;
@@ -526,15 +661,25 @@
     font-size: 12.5px;
     font-weight: 550;
     color: var(--accent);
-    background: var(--accent-soft);
+    background:
+      linear-gradient(180deg,
+        rgba(255, 255, 255, 0.5) 0%,
+        rgba(255, 255, 255, 0.08) 100%),
+      var(--accent-soft);
+    -webkit-backdrop-filter: blur(10px) saturate(160%);
+    backdrop-filter: blur(10px) saturate(160%);
+    box-shadow:
+      inset 0 0 0 0.5px rgb(var(--glow-rgb) / 0.22),
+      inset 0 1px 0.5px rgba(255, 255, 255, 0.6),
+      0 1px 2px rgba(0, 0, 0, 0.04);
     transition:
       background-color 0.2s var(--ease),
-      transform 0.18s var(--spring);
+      transform 0.18s var(--spring),
+      box-shadow 0.24s var(--ease);
   }
 
   .restore:active { transform: scale(0.93); }
 
-  /* 删除按钮 */
   .del {
     flex-shrink: 0;
     width: 30px;
@@ -602,6 +747,8 @@
     width: 92px;
     padding: 0 28px 0 12px;
     font-size: 15px;
+    -webkit-appearance: none;
+    appearance: none;
     background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A09B93' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 11px center;
@@ -623,30 +770,46 @@
   .actions .btn {
     flex: 1;
     height: 40px;
+    padding: 0 10px;
     font-size: 13.5px;
     font-weight: 500;
     color: var(--text-2);
-    background: transparent;
-    border: 1px solid var(--border-2);
+    background:
+      linear-gradient(180deg,
+        var(--glass-bg-hi) 0%,
+        var(--glass-bg-lo) 100%);
+    box-shadow:
+      inset 0 0 0 0.5px var(--glass-edge),
+      inset 0 1px 0.5px var(--glass-top),
+      inset 0 -1px 1px rgba(0, 0, 0, 0.04),
+      0 1px 2px var(--glass-drop);
   }
 
-  .actions .btn:active { background: var(--field); }
-
   .actions .btn:disabled {
-    opacity: 0.4;
+    opacity: 0.38;
     cursor: not-allowed;
+    box-shadow:
+      inset 0 0 0 0.5px var(--glass-edge),
+      0 1px 2px var(--glass-drop);
   }
 
   .actions .btn.armed {
     color: var(--danger);
-    background: var(--danger-soft);
-    border-color: transparent;
+    background:
+      linear-gradient(180deg,
+        rgba(255, 255, 255, 0.42) 0%,
+        rgba(255, 255, 255, 0.05) 100%),
+      var(--danger-soft);
+    box-shadow:
+      inset 0 0 0 0.5px rgb(201 84 78 / 0.24),
+      inset 0 1px 0.5px rgba(255, 255, 255, 0.5),
+      0 2px 10px -3px rgb(201 84 78 / 0.35);
     animation: armedPulse 1.4s var(--ease) infinite;
   }
 
   @keyframes armedPulse {
     0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
+    50%      { opacity: 0.62; }
   }
 
   /* ========== 提示 ========== */
@@ -693,20 +856,34 @@
 
     .check:hover { border-color: var(--accent); }
 
-    .btn-primary:hover { background: var(--accent-press); }
-    .btn-ghost:hover { background: rgba(0, 0, 0, 0.075); }
+    .btn-primary:hover {
+      filter: brightness(1.05);
+      box-shadow:
+        inset 0 0 0 0.5px rgba(255, 255, 255, 0.5),
+        inset 0 1px 0.5px rgba(255, 255, 255, 0.85),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.10),
+        inset 0 0 20px rgba(255, 255, 255, 0.2),
+        0 1px 2px rgba(0, 0, 0, 0.06),
+        0 8px 22px -5px rgb(var(--glow-rgb) / 0.65);
+    }
 
-    @media (prefers-color-scheme: dark) {
-      .btn-ghost:hover { background: rgba(255, 255, 255, 0.11); }
+    .btn-ghost:hover {
+      color: var(--text);
+      box-shadow:
+        inset 0 0 0 0.5px var(--glass-edge),
+        inset 0 1px 0.5px var(--glass-top),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.04),
+        inset 0 0 18px var(--glass-inner),
+        0 1px 2px var(--glass-drop),
+        0 6px 16px -5px var(--glass-drop);
     }
 
     .mode-btn:not(.active):hover {
-      background: rgba(0, 0, 0, 0.08);
       color: var(--text);
-    }
-
-    @media (prefers-color-scheme: dark) {
-      .mode-btn:not(.active):hover { background: rgba(255, 255, 255, 0.12); }
+      box-shadow:
+        inset 0 0 0 0.5px var(--glass-edge),
+        inset 0 1px 0.5px var(--glass-top),
+        0 2px 8px -2px var(--glass-drop);
     }
 
     .del:hover {
@@ -715,11 +892,21 @@
       background: var(--danger-soft);
     }
 
-    .restore:hover { background: rgba(217, 119, 87, 0.18); }
+    .restore:hover {
+      box-shadow:
+        inset 0 0 0 0.5px rgb(var(--glow-rgb) / 0.38),
+        inset 0 1px 0.5px rgba(255, 255, 255, 0.7),
+        0 2px 10px -2px rgb(var(--glow-rgb) / 0.28);
+    }
 
     .actions .btn:hover:not(:disabled):not(.armed) {
-      background: var(--field);
       color: var(--text);
+      box-shadow:
+        inset 0 0 0 0.5px var(--glass-edge),
+        inset 0 1px 0.5px var(--glass-top),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.04),
+        0 1px 2px var(--glass-drop),
+        0 5px 14px -5px var(--glass-drop);
     }
   }
 
@@ -729,7 +916,7 @@
 
     .suggest-actions .btn {
       flex: 0 0 auto;
-      min-width: 104px;
+      min-width: 106px;
     }
 
     li.item { padding: 14px 2px; }
@@ -767,6 +954,12 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0.001ms !important;
     }
+
+    .suggest {
+      box-shadow:
+        0 0 0 0.5px rgb(var(--glow-rgb) / 0.10),
+        0 0 26px -4px rgb(var(--glow-rgb) / 0.20);
+    }
   }
 </style>
 </head>
@@ -784,7 +977,7 @@
   </div>
   <div class="progress-text" id="ptext"></div>
 
-  <section class="suggest">
+  <section class="suggest" id="suggestCard">
     <div class="suggest-head">
       <span class="suggest-eyebrow">下一个建议</span>
       <span class="suggest-reason" id="suggestReason"></span>
@@ -865,7 +1058,6 @@
   var PHOTO = '';
   var items = [];
   var uid = 0;
-  var firstRender = true;
   var mode = 'group';
   var pick = '';
   var lastSubject = '';
@@ -877,6 +1069,7 @@
   var ptextEl       = document.getElementById('ptext');
   var suggestBody   = document.getElementById('suggestBody');
   var suggestReason = document.getElementById('suggestReason');
+  var suggestCard   = document.getElementById('suggestCard');
   var pickSubject   = document.getElementById('pickSubject');
   var clearDoneBtn  = document.getElementById('clearDone');
   var resetAllBtn   = document.getElementById('resetAll');
@@ -908,6 +1101,19 @@
 
   function clear(el) {
     while (el.firstChild) el.removeChild(el.firstChild);
+  }
+
+  /* 触发推荐卡片的向外脉冲光 */
+  var pulseTimer = null;
+  function pulseSuggest() {
+    if (!suggestCard) return;
+    suggestCard.classList.remove('pulse');
+    void suggestCard.offsetWidth; /* 强制回流以重启动画 */
+    suggestCard.classList.add('pulse');
+    clearTimeout(pulseTimer);
+    pulseTimer = setTimeout(function () {
+      suggestCard.classList.remove('pulse');
+    }, 820);
   }
 
   /* ================= 推荐逻辑 ================= */
@@ -1045,6 +1251,7 @@
         try { localStorage.setItem(KEY + '-last', lastSubject); } catch (e) {}
       }
       buzz(12);
+      pulseSuggest();
       save(); render();
     });
 
@@ -1055,6 +1262,7 @@
     skipBtn.addEventListener('click', function () {
       items[idx].skipped = true;
       items[idx].done = false;
+      pulseSuggest();
       save(); render();
     });
 
@@ -1125,7 +1333,6 @@
     if (item.done) li.classList.add('done');
     else if (item.skipped) li.classList.add('skipped');
 
-    /* 复选框 */
     var check = document.createElement('span');
     check.className = 'check';
     check.setAttribute('role', 'checkbox');
@@ -1145,7 +1352,6 @@
       }
     });
 
-    /* 文本 */
     var text = document.createElement('span');
     text.className = 'text';
     text.textContent = item.text;
@@ -1154,7 +1360,6 @@
     li.appendChild(check);
     li.appendChild(text);
 
-    /* 恢复按钮（仅跳过项） */
     if (item.skipped) {
       var rs = document.createElement('button');
       rs.type = 'button';
@@ -1169,7 +1374,6 @@
       li.appendChild(rs);
     }
 
-    /* 删除按钮 */
     var del = document.createElement('button');
     del.type = 'button';
     del.className = 'del';
@@ -1193,7 +1397,6 @@
     var done = 0;
     var skippedCount = 0;
 
-    /* 分组 */
     var groups = {};
     items.forEach(function (item) {
       var s = item.subject || '其他';
@@ -1207,7 +1410,6 @@
       var arr = groups[sub];
       if (!arr || !arr.length) return;
 
-      /* 跳过的沉底 */
       arr = arr.slice().sort(function (a, b) {
         return (a.skipped ? 1 : 0) - (b.skipped ? 1 : 0);
       });
@@ -1229,7 +1431,6 @@
     SUBJECT_ORDER.forEach(renderGroup);
     renderGroup('其他');
 
-    /* 空列表 */
     if (!items.length) {
       var emptyBox = document.createElement('div');
       emptyBox.className = 'empty';
@@ -1252,7 +1453,6 @@
       listEl.appendChild(emptyBox);
     }
 
-    /* 进度 */
     var pct = items.length ? Math.round((done / items.length) * 100) : 0;
     barEl.style.width = pct + '%';
 
@@ -1263,13 +1463,11 @@
         (skippedCount ? ' · 跳过 ' + skippedCount : '');
     }
 
-    /* 按钮可用性 */
     clearDoneBtn.disabled = !done;
     resetAllBtn.disabled = !items.length;
 
     refreshSubjects();
     suggest();
-    firstRender = false;
   }
 
   /* ================= 交互 ================= */
@@ -1387,7 +1585,6 @@
         save();
       }
 
-      /* 补齐 id */
       items.forEach(function (it) {
         if (!it.id) it.id = ++uid;
         else uid = Math.max(uid, it.id);
@@ -1395,13 +1592,11 @@
 
       lastSubject = localStorage.getItem(KEY + '-last') || '';
 
-      /* 恢复模式 */
       var savedMode = localStorage.getItem(KEY + '-mode');
       mode = (savedMode === 'random') ? 'random' : 'group';
       modeGroupBtn.classList.toggle('active', mode === 'group');
       modeRandomBtn.classList.toggle('active', mode === 'random');
 
-      /* 原图 */
       if (PHOTO) {
         document.getElementById('photoImg').src = PHOTO;
         document.getElementById('photoLink').href = PHOTO;
