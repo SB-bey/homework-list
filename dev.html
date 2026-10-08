@@ -3,76 +3,77 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#F5F3EF">
+<meta name="theme-color" content="#ece7de">
 <link rel="icon" type="image/png" href="favicon.png">
 <link rel="apple-touch-icon" href="favicon.png">
 <title>作业清单 · 10月3日</title>
 <style>
-  /* ========== 设计令牌 ========== */
+  /* ================================================================
+     1. 变量与基础
+     ================================================================ */
   :root {
     color-scheme: light;
 
-    --bg: #F4F2EE;
-    --card: #FFFFFF;
-    --field: #F4F2EE;
-    --text: #1F1E1C;
-    --text-2: #6B6862;
-    --text-3: #A09B93;
-    --border: rgba(0, 0, 0, 0.065);
-    --border-2: rgba(0, 0, 0, 0.11);
+    /* 背景底层 */
+    --bg-base: #ece7de;
 
-    --accent: #D97757;
-    --accent-press: #C4674A;
-    --accent-soft: #FAF0EA;
-    --accent-ring: rgba(217, 119, 87, 0.14);
+    /* 文字 */
+    --text: #1e1c19;
+    --text-2: #56524b;
+    --text-3: #8a857c;
 
-    --danger: #C9544E;
-    --danger-soft: #FBEFEE;
+    /* 强调色（暖橘） */
+    --accent: #d97757;
+    --accent-2: #c4674a;
+    --accent-soft: rgba(217, 119, 87, 0.14);
 
-    --glow-rgb: 217 119 87;
+    /* 危险色 */
+    --danger: #c9544e;
+    --danger-soft: rgba(201, 84, 78, 0.14);
 
-    --r-card: 26px;
+    /* 液态玻璃核心令牌 —— 严格对照教程 */
+    --glass-bg: rgba(255, 255, 255, 0.15);
+    --glass-bg-hover: rgba(255, 255, 255, 0.22);
+    --glass-bg-strong: rgba(255, 255, 255, 0.28);
+    --glass-border: rgba(255, 255, 255, 0.75);
+    --glass-border-hi: rgba(255, 255, 255, 0.9);
+    --glass-shadow: rgba(31, 38, 135, 0.16);
+    --glass-inset: rgba(255, 255, 255, 0.3);
+
+    /* 圆角 */
+    --r-card: 28px;
     --r-md: 16px;
-    --r-sm: 11px;
+    --r-sm: 12px;
 
+    /* 缓动 */
     --ease: cubic-bezier(0.32, 0.72, 0, 1);
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     --spring: cubic-bezier(0.34, 1.4, 0.64, 1);
-
-    --shadow-card:
-      0 1px 2px rgba(0, 0, 0, 0.03),
-      0 12px 32px -10px rgba(0, 0, 0, 0.10);
   }
 
   @media (prefers-color-scheme: dark) {
     :root {
       color-scheme: dark;
-      --bg: #191817;
-      --card: #232220;
-      --field: #191817;
-      --text: #F2F0EC;
-      --text-2: #A39E96;
-      --text-3: #77726B;
-      --border: rgba(255, 255, 255, 0.075);
-      --border-2: rgba(255, 255, 255, 0.14);
+      --bg-base: #14130f;
+      --text: #f2ede4;
+      --text-2: #a59e92;
+      --text-3: #756f65;
+      --accent: #e18d6d;
+      --accent-2: #d0785a;
+      --accent-soft: rgba(225, 141, 109, 0.15);
+      --danger: #e58480;
+      --danger-soft: rgba(229, 132, 128, 0.15);
 
-      --accent: #E08A6B;
-      --accent-press: #D2795A;
-      --accent-soft: #2E2622;
-      --accent-ring: rgba(224, 138, 107, 0.18);
-
-      --danger: #E58480;
-      --danger-soft: #2E2222;
-
-      --glow-rgb: 224 138 107;
-
-      --shadow-card:
-        0 1px 2px rgba(0, 0, 0, 0.25),
-        0 12px 32px -10px rgba(0, 0, 0, 0.5);
+      --glass-bg: rgba(255, 255, 255, 0.07);
+      --glass-bg-hover: rgba(255, 255, 255, 0.12);
+      --glass-bg-strong: rgba(255, 255, 255, 0.16);
+      --glass-border: rgba(255, 255, 255, 0.22);
+      --glass-border-hi: rgba(255, 255, 255, 0.4);
+      --glass-shadow: rgba(0, 0, 0, 0.4);
+      --glass-inset: rgba(255, 255, 255, 0.14);
     }
   }
 
-  /* ========== 基础 ========== */
   * {
     margin: 0;
     padding: 0;
@@ -88,7 +89,7 @@
   body {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
       "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
-    background: var(--bg);
+    background: var(--bg-base);
     min-height: 100vh;
     min-height: 100dvh;
     color: var(--text);
@@ -103,6 +104,8 @@
       max(14px, env(safe-area-inset-left));
     user-select: none;
     -webkit-user-select: none;
+    position: relative;
+    overflow-x: hidden;
   }
 
   input, textarea { user-select: text; -webkit-user-select: text; }
@@ -118,27 +121,146 @@
   :focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: 3px;
-    border-radius: 6px;
+    border-radius: 8px;
   }
 
-  /* ========== 卡片 ========== */
+  /* ================================================================
+     2. SVG 滤镜定义容器（教程中的折射滤镜）
+     ================================================================ */
+  .svg-filters {
+    position: absolute;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    /* 注意：不要用 display:none，Safari 会失效滤镜 */
+  }
+
+  /* ================================================================
+     3. 背景光斑（液态玻璃必须的背景）
+     ================================================================ */
+  .bg-shapes {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: -1;
+    pointer-events: none;
+  }
+
+  .blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.85;
+    will-change: transform;
+  }
+
+  .blob-1 {
+    width: 60vw; height: 60vw;
+    max-width: 520px; max-height: 520px;
+    top: -12%; left: -8%;
+    background: radial-gradient(circle, #ff8c5a 0%, #ffb088 55%, transparent 72%);
+    animation: float1 22s var(--ease) infinite alternate;
+  }
+
+  .blob-2 {
+    width: 55vw; height: 55vw;
+    max-width: 480px; max-height: 480px;
+    top: 12%; right: -14%;
+    background: radial-gradient(circle, #7dd3fc 0%, #a5b4fc 55%, transparent 72%);
+    animation: float2 26s var(--ease) infinite alternate;
+  }
+
+  .blob-3 {
+    width: 65vw; height: 65vw;
+    max-width: 560px; max-height: 560px;
+    bottom: -18%; left: 22%;
+    background: radial-gradient(circle, #f0abfc 0%, #fbcfe8 55%, transparent 72%);
+    animation: float3 30s var(--ease) infinite alternate;
+  }
+
+  @keyframes float1 {
+    from { transform: translate(0, 0) scale(1); }
+    to   { transform: translate(8%, 6%) scale(1.1); }
+  }
+  @keyframes float2 {
+    from { transform: translate(0, 0) scale(1.05); }
+    to   { transform: translate(-6%, 10%) scale(0.95); }
+  }
+  @keyframes float3 {
+    from { transform: translate(0, 0) scale(0.95); }
+    to   { transform: translate(5%, -8%) scale(1.08); }
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .blob { opacity: 0.55; filter: blur(100px); }
+  }
+
+  /* ================================================================
+     4. 液态玻璃基础类
+     严格照搬教程结构：
+       .glass        —— 半透明 + backdrop-filter + 内阴影
+       .glass::after —— 内嵌光泽层（inset box-shadow + 反光）
+     ================================================================ */
+  .glass {
+    position: relative;
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(2px) saturate(180%);
+    /* 双层声明：不支持 url() 的浏览器会自动回退到上面一行 */
+    backdrop-filter: blur(2px) saturate(180%);
+    backdrop-filter: url(#liquid-distort) blur(3px) saturate(200%);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--r-card);
+    box-shadow:
+      0 8px 32px var(--glass-shadow),
+      inset 0 4px 20px var(--glass-inset);
+  }
+
+  .glass::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: inherit;
+    -webkit-backdrop-filter: blur(1px);
+    backdrop-filter: blur(1px);
+    box-shadow:
+      inset -10px -8px 0 -11px rgba(255, 255, 255, 0.95),
+      inset 0 -9px 0 -8px rgba(255, 255, 255, 0.95);
+    opacity: 0.6;
+    z-index: -1;
+    filter: blur(0.5px) brightness(115%);
+    pointer-events: none;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .glass::after {
+      background: rgba(255, 255, 255, 0.04);
+      box-shadow:
+        inset -10px -8px 0 -11px rgba(255, 255, 255, 0.4),
+        inset 0 -9px 0 -8px rgba(255, 255, 255, 0.4);
+    }
+  }
+
+  /* ================================================================
+     5. 卡片主体
+     ================================================================ */
   .card {
     width: 100%;
     max-width: 620px;
     margin: 0 auto;
-    background: var(--card);
-    border-radius: var(--r-card);
-    box-shadow: var(--shadow-card);
     padding: clamp(20px, 5.2vw, 32px);
-    animation: cardIn 0.7s var(--ease-out) both;
+    animation: cardIn 0.8s var(--ease-out) both;
   }
 
   @keyframes cardIn {
-    from { opacity: 0; transform: translateY(14px) scale(0.985); }
+    from { opacity: 0; transform: translateY(16px) scale(0.985); }
     to   { opacity: 1; transform: none; }
   }
 
-  /* ========== 头部 ========== */
+  /* ================================================================
+     6. 头部
+     ================================================================ */
   .header {
     display: flex;
     align-items: baseline;
@@ -161,31 +283,43 @@
     margin-left: auto;
     text-align: right;
     font-variant-numeric: tabular-nums;
-    letter-spacing: 0.01em;
   }
 
   .sub {
     font-size: 13.5px;
-    color: var(--text-3);
-    letter-spacing: 0.005em;
+    color: var(--text-2);
     margin-bottom: 22px;
+    opacity: 0.85;
   }
 
-  /* ========== 进度 ========== */
+  /* ================================================================
+     7. 进度
+     ================================================================ */
   .progress-track {
-    height: 5px;
-    background: var(--border);
+    height: 6px;
+    background: rgba(255, 255, 255, 0.28);
+    border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: 999px;
     overflow: hidden;
     margin-bottom: 9px;
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .progress-track {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.12);
+    }
   }
 
   .progress-fill {
     height: 100%;
     width: 0%;
     border-radius: 999px;
-    background: var(--accent);
-    transition: width 0.55s var(--ease);
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    box-shadow: 0 0 12px rgba(217, 119, 87, 0.55);
+    transition: width 0.6s var(--ease);
   }
 
   .progress-text {
@@ -196,52 +330,75 @@
     margin-bottom: 20px;
   }
 
-  /* ========== 建议卡片（向外呼吸光） ========== */
+  /* ================================================================
+     8. 建议卡片 —— 向外呼吸光晕
+     ================================================================ */
   .suggest {
     position: relative;
     background: var(--accent-soft);
+    -webkit-backdrop-filter: blur(2px) saturate(180%);
+    backdrop-filter: blur(2px) saturate(180%);
+    backdrop-filter: url(#liquid-distort) blur(3px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.55);
     border-radius: var(--r-md);
     padding: 16px;
     margin-bottom: 18px;
     box-shadow:
-      0 0 0 0.5px rgb(var(--glow-rgb) / 0.06),
-      0 0 20px -4px rgb(var(--glow-rgb) / 0.16),
-      0 0 46px -10px rgb(var(--glow-rgb) / 0.10);
+      0 0 0 0.5px rgba(217, 119, 87, 0.08),
+      0 0 22px -4px rgba(217, 119, 87, 0.22),
+      0 0 50px -10px rgba(217, 119, 87, 0.14),
+      inset 0 4px 20px rgba(255, 255, 255, 0.3);
     animation: suggestGlow 4.5s var(--ease) infinite;
+    overflow: hidden;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .suggest {
+      border-color: rgba(255, 255, 255, 0.16);
+      box-shadow:
+        0 0 0 0.5px rgba(225, 141, 109, 0.14),
+        0 0 24px -4px rgba(225, 141, 109, 0.28),
+        0 0 60px -10px rgba(225, 141, 109, 0.16),
+        inset 0 4px 20px rgba(255, 255, 255, 0.08);
+    }
   }
 
   @keyframes suggestGlow {
     0%, 100% {
       box-shadow:
-        0 0 0 0.5px rgb(var(--glow-rgb) / 0.06),
-        0 0 18px -4px rgb(var(--glow-rgb) / 0.14),
-        0 0 40px -10px rgb(var(--glow-rgb) / 0.08);
+        0 0 0 0.5px rgba(217, 119, 87, 0.08),
+        0 0 18px -4px rgba(217, 119, 87, 0.18),
+        0 0 40px -10px rgba(217, 119, 87, 0.10),
+        inset 0 4px 20px rgba(255, 255, 255, 0.3);
     }
     50% {
       box-shadow:
-        0 0 0 0.5px rgb(var(--glow-rgb) / 0.14),
-        0 0 30px -2px rgb(var(--glow-rgb) / 0.28),
-        0 0 66px -6px rgb(var(--glow-rgb) / 0.16);
+        0 0 0 0.5px rgba(217, 119, 87, 0.18),
+        0 0 32px -2px rgba(217, 119, 87, 0.34),
+        0 0 68px -6px rgba(217, 119, 87, 0.2),
+        inset 0 4px 20px rgba(255, 255, 255, 0.35);
     }
   }
 
-  .suggest::after {
+  /* 点击脉冲光 */
+  .suggest::before {
     content: '';
     position: absolute;
     inset: 0;
     border-radius: inherit;
     pointer-events: none;
-    box-shadow: 0 0 52px 10px rgb(var(--glow-rgb) / 0.5);
+    box-shadow: 0 0 55px 12px rgba(217, 119, 87, 0.55);
     opacity: 0;
+    z-index: 2;
   }
 
-  .suggest.pulse::after {
-    animation: suggestPulse 0.78s var(--ease-out);
+  .suggest.pulse::before {
+    animation: suggestPulse 0.8s var(--ease-out);
   }
 
   @keyframes suggestPulse {
     0%   { opacity: 0.85; transform: scale(1); }
-    100% { opacity: 0;    transform: scale(1.045); }
+    100% { opacity: 0;    transform: scale(1.05); }
   }
 
   .suggest-head {
@@ -250,6 +407,8 @@
     gap: 9px;
     flex-wrap: wrap;
     margin-bottom: 12px;
+    position: relative;
+    z-index: 1;
   }
 
   .suggest-eyebrow {
@@ -261,11 +420,13 @@
 
   .suggest-reason {
     font-size: 12.5px;
-    color: var(--text-3);
-    letter-spacing: 0.01em;
+    color: var(--text-2);
   }
 
-  .suggest-body { margin-bottom: 0; }
+  .suggest-body {
+    position: relative;
+    z-index: 1;
+  }
 
   .suggest-task {
     display: flex;
@@ -296,9 +457,11 @@
     gap: 8px;
   }
 
-  .suggest-actions .btn { flex: 1; }
+  .suggest-actions .glass-btn { flex: 1; }
 
-  /* ========== 标签 ========== */
+  /* ================================================================
+     9. 科目标签
+     ================================================================ */
   .tag {
     display: inline-flex;
     align-items: center;
@@ -307,114 +470,92 @@
     border-radius: 6px;
     font-size: 11.5px;
     font-weight: 600;
-    letter-spacing: 0.02em;
     flex-shrink: 0;
     white-space: nowrap;
   }
 
-  /* ============================================================
-     按钮基础
-     液态玻璃由 JS 动态注入 backdrop-filter: url(#filter)
-     下方 CSS 提供无 JS / 不支持的降级视觉
-     ============================================================ */
-  .btn {
+  /* ================================================================
+     10. 玻璃按钮（教程核心）
+     ================================================================ */
+  .glass-btn {
     position: relative;
-    overflow: hidden;
-    isolation: isolate;
-    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 42px;
     padding: 0 18px;
     border-radius: var(--r-sm);
     font-size: 14px;
     font-weight: 550;
-    letter-spacing: 0.005em;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    color: var(--text);
     white-space: nowrap;
-    -webkit-backdrop-filter: blur(16px) saturate(180%);
-    backdrop-filter: blur(16px) saturate(180%);
-    transition:
-      transform 0.18s var(--spring),
-      background-color 0.2s var(--ease),
-      box-shadow 0.28s var(--ease),
-      color 0.2s var(--ease),
-      filter 0.2s var(--ease);
-  }
+    overflow: hidden;
+    isolation: isolate;
 
-  .btn:active { transform: scale(0.965); }
-
-  /* 主按钮降级底色 */
-  .btn-primary {
-    color: #FFFFFF;
-    background: linear-gradient(160deg, var(--accent) 0%, var(--accent-press) 100%);
+    /* 液态玻璃核心（教程基础样式） */
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    -webkit-backdrop-filter: blur(2px) saturate(180%);
+    backdrop-filter: blur(2px) saturate(180%);
+    backdrop-filter: url(#liquid-distort) blur(3px) saturate(200%);
     box-shadow:
-      inset 0 0 0 0.5px rgba(255, 255, 255, 0.42),
-      inset 0 1px 0.5px rgba(255, 255, 255, 0.78),
-      inset 0 -1px 1px rgba(0, 0, 0, 0.10),
-      0 1px 2px rgba(0, 0, 0, 0.06),
-      0 6px 18px -5px rgb(var(--glow-rgb) / 0.55);
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.12);
+      0 8px 32px var(--glass-shadow),
+      inset 0 4px 20px var(--glass-inset);
+
+    transition:
+      background-color 0.28s var(--ease),
+      box-shadow 0.28s var(--ease),
+      transform 0.2s var(--spring),
+      color 0.2s var(--ease),
+      border-color 0.28s var(--ease);
   }
 
-  /* 玻璃反光扫过（增强液态感） */
-  .btn-primary::after {
+  /* 教程光泽伪元素 */
+  .glass-btn::after {
     content: '';
     position: absolute;
-    top: -70%;
-    left: -80%;
-    width: 48%;
-    height: 240%;
-    background: linear-gradient(100deg,
-      transparent 0%,
-      rgba(255, 255, 255, 0.14) 34%,
-      rgba(255, 255, 255, 0.58) 50%,
-      rgba(255, 255, 255, 0.14) 66%,
-      transparent 100%);
-    transform: rotate(14deg);
-    pointer-events: none;
-    animation: sheen 5.6s var(--ease) infinite;
-  }
-
-  @keyframes sheen {
-    0%, 60%   { left: -80%; }
-    84%, 100% { left: 140%; }
-  }
-
-  /* 幽灵按钮降级底色 */
-  .btn-ghost {
-    color: var(--text-2);
-    background: rgba(255, 255, 255, 0.55);
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: inherit;
+    -webkit-backdrop-filter: blur(1px);
+    backdrop-filter: blur(1px);
     box-shadow:
-      inset 0 0 0 0.5px rgba(255, 255, 255, 0.85),
-      inset 0 1px 0.5px rgba(255, 255, 255, 0.7),
-      inset 0 -1px 1px rgba(0, 0, 0, 0.04),
-      0 1px 2px rgba(0, 0, 0, 0.05);
+      inset -10px -8px 0 -11px rgba(255, 255, 255, 0.95),
+      inset 0 -9px 0 -8px rgba(255, 255, 255, 0.95);
+    opacity: 0.6;
+    z-index: -1;
+    filter: blur(0.5px) brightness(115%);
+    pointer-events: none;
   }
 
   @media (prefers-color-scheme: dark) {
-    .btn-ghost { background: rgba(255, 255, 255, 0.09); }
-  }
-
-  /* 液态玻璃已启用时，隐藏降级背景（让 JS 生成的折射层露出） */
-  .btn[data-liquid-glass="on"].btn-primary {
-    background: linear-gradient(180deg,
-      rgba(255, 255, 255, 0.34) 0%,
-      rgba(255, 255, 255, 0.08) 42%,
-      rgba(255, 255, 255, 0) 58%),
-      linear-gradient(160deg, var(--accent) 0%, var(--accent-press) 100%);
-  }
-
-  .btn[data-liquid-glass="on"].btn-ghost {
-    background: rgba(255, 255, 255, 0.28);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    .btn[data-liquid-glass="on"].btn-ghost {
-      background: rgba(255, 255, 255, 0.06);
+    .glass-btn::after {
+      background: rgba(255, 255, 255, 0.04);
+      box-shadow:
+        inset -10px -8px 0 -11px rgba(255, 255, 255, 0.35),
+        inset 0 -9px 0 -8px rgba(255, 255, 255, 0.35);
     }
   }
 
-  /* ========== 控制条 ========== */
+  .glass-btn > * { position: relative; z-index: 1; }
+
+  .glass-btn:active { transform: scale(0.965); }
+
+  /* 主按钮：暖橘玻璃 */
+  .glass-btn.primary {
+    color: #fff;
+    background: rgba(217, 119, 87, 0.42);
+    border-color: rgba(255, 255, 255, 0.68);
+    box-shadow:
+      0 8px 32px rgba(217, 119, 87, 0.28),
+      inset 0 4px 20px rgba(255, 255, 255, 0.38);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.12);
+  }
+
+  /* ================================================================
+     11. 模式胶囊
+     ================================================================ */
   .suggest-controls {
     display: flex;
     flex-wrap: wrap;
@@ -422,74 +563,72 @@
     gap: 7px;
     margin-top: 13px;
     padding-top: 13px;
-    border-top: 1px solid rgb(var(--glow-rgb) / 0.12);
+    border-top: 1px solid rgba(217, 119, 87, 0.14);
+    position: relative;
+    z-index: 1;
   }
 
   .mode-label {
     font-size: 12px;
     color: var(--text-3);
-    letter-spacing: 0.02em;
   }
 
-  /* 模式胶囊 */
   .mode-btn {
     position: relative;
-    overflow: hidden;
-    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     height: 30px;
     padding: 0 13px;
     border-radius: 999px;
     font-size: 12.5px;
     font-weight: 500;
     color: var(--text-2);
-    background: rgba(255, 255, 255, 0.5);
-    -webkit-backdrop-filter: blur(12px) saturate(160%);
-    backdrop-filter: blur(12px) saturate(160%);
-    box-shadow:
-      inset 0 0 0 0.5px rgba(255, 255, 255, 0.8),
-      inset 0 1px 0.5px rgba(255, 255, 255, 0.65),
-      0 1px 2px rgba(0, 0, 0, 0.05);
-    transition:
-      transform 0.18s var(--spring),
-      background-color 0.22s var(--ease),
-      box-shadow 0.28s var(--ease),
-      color 0.22s var(--ease);
-  }
+    overflow: hidden;
+    isolation: isolate;
 
-  @media (prefers-color-scheme: dark) {
-    .mode-btn { background: rgba(255, 255, 255, 0.08); }
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    -webkit-backdrop-filter: blur(2px) saturate(180%);
+    backdrop-filter: blur(2px) saturate(180%);
+    box-shadow:
+      0 4px 16px rgba(31, 38, 135, 0.12),
+      inset 0 2px 10px rgba(255, 255, 255, 0.3);
+
+    transition:
+      background-color 0.22s var(--ease),
+      color 0.22s var(--ease),
+      transform 0.18s var(--spring),
+      box-shadow 0.24s var(--ease);
   }
 
   .mode-btn:active { transform: scale(0.94); }
 
   .mode-btn.active {
-    color: #FFFFFF;
-    background: linear-gradient(160deg, var(--accent) 0%, var(--accent-press) 100%);
+    color: #fff;
+    background: rgba(217, 119, 87, 0.42);
+    border-color: rgba(255, 255, 255, 0.68);
     box-shadow:
-      inset 0 0 0 0.5px rgba(255, 255, 255, 0.38),
-      inset 0 1px 0.5px rgba(255, 255, 255, 0.72),
-      0 2px 10px -2px rgb(var(--glow-rgb) / 0.55);
+      0 6px 22px rgba(217, 119, 87, 0.28),
+      inset 0 2px 10px rgba(255, 255, 255, 0.42);
     font-weight: 600;
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.10);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.12);
   }
 
-  .mode-btn[data-liquid-glass="on"].active {
-    background: linear-gradient(180deg,
-      rgba(255, 255, 255, 0.34) 0%,
-      rgba(255, 255, 255, 0.05) 55%),
-      linear-gradient(160deg, var(--accent) 0%, var(--accent-press) 100%);
-  }
-
-  /* 下拉框 */
+  /* ================================================================
+     12. 下拉选择
+     ================================================================ */
   select {
     -webkit-appearance: none;
     appearance: none;
     height: 30px;
     padding: 0 30px 0 12px;
     border-radius: 999px;
-    border: none;
-    background-color: rgba(0, 0, 0, 0.045);
-    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A09B93' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    border: 1px solid var(--glass-border);
+    background-color: var(--glass-bg);
+    -webkit-backdrop-filter: blur(4px) saturate(160%);
+    backdrop-filter: blur(4px) saturate(160%);
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%238a857c' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 12px center;
     font-size: 12.5px;
@@ -497,27 +636,31 @@
     color: var(--text-2);
     outline: none;
     max-width: 100%;
-    transition: background-color 0.2s var(--ease);
+    transition: background-color 0.2s var(--ease), border-color 0.2s var(--ease);
   }
 
-  @media (prefers-color-scheme: dark) {
-    select { background-color: rgba(255, 255, 255, 0.07); }
-  }
+  select option { background: var(--bg-base); color: var(--text); }
 
-  select option { background: var(--card); color: var(--text); }
-
-  /* ========== 原图 ========== */
+  /* ================================================================
+     13. 原图
+     ================================================================ */
   .photo {
-    background: var(--field);
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(2px) saturate(180%);
+    backdrop-filter: blur(2px) saturate(180%);
+    border: 1px solid var(--glass-border);
     border-radius: var(--r-md);
     padding: 14px;
     margin-bottom: 18px;
+    box-shadow:
+      0 8px 32px var(--glass-shadow),
+      inset 0 4px 20px var(--glass-inset);
   }
 
   .photo-head {
     font-size: 12.5px;
     font-weight: 600;
-    color: var(--text-3);
+    color: var(--text-2);
     letter-spacing: 0.03em;
     margin-bottom: 11px;
   }
@@ -530,11 +673,13 @@
     object-fit: contain;
     display: block;
     border-radius: 10px;
-    background: var(--card);
+    background: rgba(0,0,0,0.04);
     cursor: zoom-in;
   }
 
-  /* ========== 列表 ========== */
+  /* ================================================================
+     14. 列表
+     ================================================================ */
   .list { list-style: none; }
 
   .group-title {
@@ -568,21 +713,29 @@
     transition: background-color 0.2s var(--ease);
   }
 
-  li.item + li.item { border-top: 1px solid var(--border); }
+  li.item + li.item { border-top: 1px solid rgba(255, 255, 255, 0.22); }
 
+  @media (prefers-color-scheme: dark) {
+    li.item + li.item { border-top-color: rgba(255, 255, 255, 0.06); }
+  }
+
+  /* 复选框 —— 玻璃小方块 */
   .check {
     position: relative;
     width: 22px;
     height: 22px;
     flex-shrink: 0;
     border-radius: 7px;
-    border: 1.5px solid var(--border-2);
-    background: transparent;
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
+    box-shadow: inset 0 2px 6px rgba(255, 255, 255, 0.3);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #FFFFFF;
+    color: #fff;
     transition:
       background-color 0.24s var(--ease),
       border-color 0.24s var(--ease),
@@ -608,8 +761,8 @@
   }
 
   li.item.done .check {
-    background: var(--accent);
-    border-color: var(--accent);
+    background: rgba(217, 119, 87, 0.9);
+    border-color: rgba(255, 255, 255, 0.6);
   }
 
   li.item.done .check svg {
@@ -645,25 +798,23 @@
 
   li.item.skipped .check { opacity: 0.45; }
 
-  /* 恢复按钮 */
+  /* 恢复按钮 —— 玻璃胶囊 */
   .restore {
     position: relative;
     overflow: hidden;
     isolation: isolate;
     flex-shrink: 0;
     height: 28px;
-    padding: 0 11px;
-    border-radius: 8px;
+    padding: 0 12px;
+    border-radius: 999px;
     font-size: 12.5px;
     font-weight: 550;
     color: var(--accent);
-    background: var(--accent-soft);
-    -webkit-backdrop-filter: blur(10px) saturate(160%);
-    backdrop-filter: blur(10px) saturate(160%);
-    box-shadow:
-      inset 0 0 0 0.5px rgb(var(--glow-rgb) / 0.22),
-      inset 0 1px 0.5px rgba(255, 255, 255, 0.6),
-      0 1px 2px rgba(0, 0, 0, 0.04);
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    box-shadow: inset 0 2px 8px rgba(255, 255, 255, 0.3);
     transition:
       background-color 0.2s var(--ease),
       transform 0.18s var(--spring),
@@ -691,12 +842,11 @@
 
   .del svg { width: 14px; height: 14px; }
 
-  .del:active {
-    transform: scale(0.88);
-    opacity: 1;
-  }
+  .del:active { transform: scale(0.88); opacity: 1; }
 
-  /* ========== 添加栏 ========== */
+  /* ================================================================
+     15. 添加栏
+     ================================================================ */
   .add-bar {
     display: flex;
     gap: 8px;
@@ -708,8 +858,11 @@
   .add-bar select {
     height: 44px;
     border-radius: var(--r-sm);
-    border: 1px solid var(--border-2);
-    background: var(--field);
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: blur(6px) saturate(160%);
+    backdrop-filter: blur(6px) saturate(160%);
+    box-shadow: inset 0 2px 8px rgba(255, 255, 255, 0.25);
     color: var(--text);
     font-size: 16px;
     font-family: inherit;
@@ -731,7 +884,9 @@
   .add-bar input:focus,
   .add-bar select:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-ring);
+    box-shadow:
+      inset 0 2px 8px rgba(255, 255, 255, 0.3),
+      0 0 0 3px rgba(217, 119, 87, 0.18);
   }
 
   .add-bar select {
@@ -742,25 +897,27 @@
     border-radius: var(--r-sm);
     -webkit-appearance: none;
     appearance: none;
-    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%23A09B93' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1L5 5L9 1' stroke='%238a857c' stroke-width='1.6' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 11px center;
   }
 
-  .add-bar .btn {
+  .add-bar .glass-btn {
     height: 44px;
     padding: 0 22px;
     flex-shrink: 0;
   }
 
-  /* ========== 底部操作 ========== */
+  /* ================================================================
+     16. 底部操作
+     ================================================================ */
   .actions {
     display: flex;
     gap: 8px;
     margin-top: 14px;
   }
 
-  .actions .btn {
+  .actions .glass-btn {
     flex: 1;
     height: 40px;
     padding: 0 10px;
@@ -769,36 +926,37 @@
     color: var(--text-2);
   }
 
-  .actions .btn:disabled {
-    opacity: 0.38;
+  .actions .glass-btn:disabled {
+    opacity: 0.4;
     cursor: not-allowed;
   }
 
-  .actions .btn.armed {
+  .actions .glass-btn.armed {
     color: var(--danger);
     background: var(--danger-soft);
+    border-color: rgba(201, 84, 78, 0.35);
     box-shadow:
-      inset 0 0 0 0.5px rgb(201 84 78 / 0.24),
-      0 2px 10px -3px rgb(201 84 78 / 0.35);
+      0 8px 28px rgba(201, 84, 78, 0.28),
+      inset 0 4px 20px rgba(255, 255, 255, 0.3);
     animation: armedPulse 1.4s var(--ease) infinite;
   }
 
   @keyframes armedPulse {
     0%, 100% { opacity: 1; }
-    50%      { opacity: 0.62; }
+    50%      { opacity: 0.65; }
   }
 
-  /* ========== 提示 ========== */
+  /* ================================================================
+     17. 提示与空状态
+     ================================================================ */
   .hint {
     font-size: 12px;
     color: var(--text-3);
     text-align: center;
     line-height: 1.7;
     margin-top: 20px;
-    letter-spacing: 0.01em;
   }
 
-  /* ========== 空状态 ========== */
   .empty {
     text-align: center;
     padding: 28px 12px 24px;
@@ -808,7 +966,7 @@
   .empty-mark {
     font-size: 26px;
     margin-bottom: 10px;
-    opacity: 0.7;
+    opacity: 0.6;
   }
 
   .empty-main {
@@ -822,29 +980,37 @@
     color: var(--text-3);
   }
 
-  /* ========== 悬停 ========== */
+  /* ================================================================
+     18. 悬停（教程：玻璃 hover 加强）
+     ================================================================ */
   @media (hover: hover) and (pointer: fine) {
-    li.item:hover { background: rgba(0, 0, 0, 0.018); }
+    li.item:hover { background: rgba(255, 255, 255, 0.14); }
 
     @media (prefers-color-scheme: dark) {
-      li.item:hover { background: rgba(255, 255, 255, 0.025); }
+      li.item:hover { background: rgba(255, 255, 255, 0.05); }
     }
 
     .check:hover { border-color: var(--accent); }
 
-    .btn-primary:hover {
-      filter: brightness(1.05);
+    /* 教程 hover 样式 */
+    .glass-btn:hover {
+      background: var(--glass-bg-hover);
       box-shadow:
-        inset 0 0 0 0.5px rgba(255, 255, 255, 0.5),
-        inset 0 1px 0.5px rgba(255, 255, 255, 0.85),
-        inset 0 -1px 1px rgba(0, 0, 0, 0.10),
-        0 1px 2px rgba(0, 0, 0, 0.06),
-        0 8px 22px -5px rgb(var(--glow-rgb) / 0.65);
+        0 12px 40px rgba(31, 38, 135, 0.22),
+        inset 0 4px 20px rgba(255, 255, 255, 0.35);
     }
 
-    .btn-ghost:hover { color: var(--text); }
+    .glass-btn.primary:hover {
+      background: rgba(217, 119, 87, 0.55);
+      box-shadow:
+        0 12px 40px rgba(217, 119, 87, 0.35),
+        inset 0 4px 20px rgba(255, 255, 255, 0.42);
+    }
 
-    .mode-btn:not(.active):hover { color: var(--text); }
+    .mode-btn:hover:not(.active) {
+      background: var(--glass-bg-hover);
+      color: var(--text);
+    }
 
     .del:hover {
       opacity: 1;
@@ -853,17 +1019,16 @@
     }
 
     .restore:hover {
-      box-shadow:
-        inset 0 0 0 0.5px rgb(var(--glow-rgb) / 0.38),
-        inset 0 1px 0.5px rgba(255, 255, 255, 0.7),
-        0 2px 10px -2px rgb(var(--glow-rgb) / 0.28);
+      background: var(--glass-bg-hover);
     }
   }
 
-  /* ========== 响应式 ========== */
+  /* ================================================================
+     19. 响应式
+     ================================================================ */
   @media (min-width: 600px) {
     .card { max-width: 660px; }
-    .suggest-actions .btn { flex: 0 0 auto; min-width: 106px; }
+    .suggest-actions .glass-btn { flex: 0 0 auto; min-width: 106px; }
     li.item { padding: 14px 2px; }
   }
 
@@ -875,10 +1040,12 @@
     .add-bar { flex-wrap: wrap; }
     .add-bar input { order: 1; flex: 1 1 100%; }
     .add-bar select { order: 2; flex: 1 1 0; width: auto; }
-    .add-bar .btn { order: 3; flex: 1 1 0; padding: 0; }
+    .add-bar .glass-btn { order: 3; flex: 1 1 0; padding: 0; }
   }
 
-  /* ========== 减少动效 ========== */
+  /* ================================================================
+     20. 减少动效
+     ================================================================ */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: 0.001ms !important;
@@ -888,15 +1055,49 @@
 
     .suggest {
       box-shadow:
-        0 0 0 0.5px rgb(var(--glow-rgb) / 0.10),
-        0 0 26px -4px rgb(var(--glow-rgb) / 0.20);
+        0 0 0 0.5px rgba(217, 119, 87, 0.1),
+        0 0 26px -4px rgba(217, 119, 87, 0.22),
+        inset 0 4px 20px rgba(255, 255, 255, 0.3);
     }
   }
 </style>
 </head>
 <body>
 
-<div class="card">
+<!-- ================================================================
+     SVG 折射滤镜（教程核心：feTurbulence + feDisplacementMap）
+     ================================================================ -->
+<svg class="svg-filters" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="liquid-distort" x="-20%" y="-20%" width="140%" height="140%"
+            color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise"
+                    baseFrequency="0.008"
+                    numOctaves="2"
+                    result="noise"/>
+      <feGaussianBlur in="noise" stdDeviation="2" result="blurred"/>
+      <feDisplacementMap in="SourceGraphic"
+                         in2="blurred"
+                         scale="15"
+                         xChannelSelector="R"
+                         yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+
+<!-- ================================================================
+     背景光斑（让玻璃有东西可折射）
+     ================================================================ -->
+<div class="bg-shapes" aria-hidden="true">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+</div>
+
+<!-- ================================================================
+     主卡片
+     ================================================================ -->
+<main class="card glass">
   <div class="header">
     <h1>作业清单</h1>
     <span class="date" id="dateLabel">10月3日 · 周六</span>
@@ -946,354 +1147,24 @@
       <option value="物理">物理</option>
     </select>
     <input id="newItem" type="text" placeholder="添加一条作业…" maxlength="60">
-    <button class="btn btn-primary" id="addBtn" type="button">添加</button>
+    <button class="glass-btn primary" id="addBtn" type="button">添加</button>
   </div>
 
   <div class="actions">
-    <button class="btn btn-ghost" id="clearDone" type="button">清除已完成</button>
-    <button class="btn btn-ghost" id="resetAll" type="button">重置全部</button>
+    <button class="glass-btn" id="clearDone" type="button">清除已完成</button>
+    <button class="glass-btn" id="resetAll" type="button">重置全部</button>
   </div>
 
   <p class="hint">跳过的条目可以恢复，推荐不喜欢就换一个</p>
-</div>
+</main>
 
 <script>
 /* ================================================================
-   Liquid Glass Engine
-   基于 Shu Ding (https://github.com/shuding/liquid-glass) 的
-   SVG feImage + feDisplacementMap 折射方案，针对 HTML 按钮
-   自适应尺寸。每个按钮单独生成一张位移映射图。
+   应用逻辑（保持上一版功能不变）
    ================================================================ */
 (function () {
   'use strict';
 
-  var SVG_NS = 'http://www.w3.org/2000/svg';
-  var XLINK_NS = 'http://www.w3.org/1999/xlink';
-
-  /* ---------- SDF 与工具 ---------- */
-  function smoothStep(a, b, t) {
-    t = Math.max(0, Math.min(1, (t - a) / (b - a)));
-    return t * t * (3 - 2 * t);
-  }
-
-  // 圆角矩形 SDF：负值在内部，0 在边界，正值在外部
-  function sdRoundedBox(px, py, bx, by, r) {
-    var qx = Math.abs(px) - bx + r;
-    var qy = Math.abs(py) - by + r;
-    var mx = Math.max(qx, 0);
-    var my = Math.max(qy, 0);
-    return Math.min(Math.max(qx, qy), 0) + Math.sqrt(mx * mx + my * my) - r;
-  }
-
-  // SDF 梯度（指向外侧），用于计算折射方向
-  function sdfGradient(px, py, bx, by, r) {
-    var ax = Math.abs(px);
-    var ay = Math.abs(py);
-    var qx = ax - bx + r;
-    var qy = ay - by + r;
-    var sx = px >= 0 ? 1 : -1;
-    var sy = py >= 0 ? 1 : -1;
-    var gx, gy;
-
-    if (qx > 0 && qy > 0) {
-      var len = Math.sqrt(qx * qx + qy * qy) || 1;
-      gx = sx * qx / len;
-      gy = sy * qy / len;
-    } else if (qx > qy) {
-      gx = sx; gy = 0;
-    } else {
-      gx = 0; gy = sy;
-    }
-    return { x: gx, y: gy };
-  }
-
-  /* ---------- 位移映射图生成 ---------- */
-  function generateDisplacementMap(w, h, cornerRadius, strength, edgeWidth) {
-    var canvas = document.createElement('canvas');
-    canvas.width = w;
-    canvas.height = h;
-    var ctx = canvas.getContext('2d');
-    var imgData = ctx.createImageData(w, h);
-    var data = imgData.data;
-
-    // 默认填中性灰（无位移）
-    for (var i = 0; i < w * h; i++) {
-      data[i * 4]     = 128;
-      data[i * 4 + 1] = 128;
-      data[i * 4 + 2] = 128;
-      data[i * 4 + 3] = 255;
-    }
-
-    var cx = w / 2;
-    var cy = h / 2;
-    var bx = Math.max(0.5, w / 2 - 0.5);
-    var by = Math.max(0.5, h / 2 - 0.5);
-    var r = Math.max(0, Math.min(cornerRadius, Math.min(bx, by)));
-    var ew = Math.max(0.5, Math.min(edgeWidth, Math.min(bx, by) * 0.95));
-
-    var dxArr = new Float32Array(w * h);
-    var dyArr = new Float32Array(w * h);
-    var maxAbs = 0;
-
-    for (var y = 0; y < h; y++) {
-      for (var x = 0; x < w; x++) {
-        var px = x + 0.5 - cx;
-        var py = y + 0.5 - cy;
-
-        var d = sdRoundedBox(px, py, bx, by, r);
-        if (d > 0) continue; // 外侧跳过
-
-        var depth = -d;
-        var t = 1 - smoothStep(0, ew, depth);
-        var edgeFactor = t * t * (3 - 2 * t);
-
-        if (edgeFactor < 0.002) continue;
-
-        var g = sdfGradient(px, py, bx, by, r);
-        var dx = -g.x * edgeFactor * strength;
-        var dy = -g.y * edgeFactor * strength;
-
-        var idx = y * w + x;
-        dxArr[idx] = dx;
-        dyArr[idx] = dy;
-
-        var a = Math.max(Math.abs(dx), Math.abs(dy));
-        if (a > maxAbs) maxAbs = a;
-      }
-    }
-
-    if (maxAbs < 0.0001) maxAbs = 0.0001;
-    var scale = maxAbs * 2;
-
-    for (var k = 0; k < w * h; k++) {
-      var dxv = dxArr[k];
-      var dyv = dyArr[k];
-      if (dxv === 0 && dyv === 0) continue;
-
-      var rv = Math.round((dxv / scale + 0.5) * 255);
-      var gv = Math.round((dyv / scale + 0.5) * 255);
-
-      data[k * 4]     = rv < 0 ? 0 : (rv > 255 ? 255 : rv);
-      data[k * 4 + 1] = gv < 0 ? 0 : (gv > 255 ? 255 : gv);
-    }
-
-    ctx.putImageData(imgData, 0, 0);
-    return { dataURL: canvas.toDataURL('image/png'), scale: scale };
-  }
-
-  /* ---------- 位移图缓存 ---------- */
-  var mapCache = new Map();
-  function getMap(w, h, radius, strength, edgeWidth) {
-    var key = w + '|' + h + '|' + radius.toFixed(1) + '|' +
-      strength.toFixed(1) + '|' + edgeWidth.toFixed(1);
-
-    var hit = mapCache.get(key);
-    if (hit) return hit;
-
-    hit = generateDisplacementMap(w, h, radius, strength, edgeWidth);
-    mapCache.set(key, hit);
-
-    if (mapCache.size > 80) {
-      mapCache.delete(mapCache.keys().next().value);
-    }
-    return hit;
-  }
-
-  /* ============================================================
-     LiquidGlass 管理器
-     ============================================================ */
-  function LiquidGlass() {
-    this.svg = null;
-    this.instances = new Map();
-    this.idc = 0;
-    this.ro = null;
-    this.pending = new Set();
-    this.rafId = null;
-    this._init();
-  }
-
-  LiquidGlass.prototype._init = function () {
-    var svg = document.createElementNS(SVG_NS, 'svg');
-    svg.setAttribute('aria-hidden', 'true');
-    svg.setAttribute('width', '0');
-    svg.setAttribute('height', '0');
-    svg.style.cssText =
-      'position:absolute;left:0;top:0;width:0;height:0;overflow:hidden;pointer-events:none;';
-    document.body.appendChild(svg);
-    this.svg = svg;
-
-    var self = this;
-
-    if (typeof ResizeObserver !== 'undefined') {
-      this.ro = new ResizeObserver(function (entries) {
-        for (var i = 0; i < entries.length; i++) {
-          self.pending.add(entries[i].target);
-        }
-        if (self.rafId) return;
-        self.rafId = requestAnimationFrame(function () {
-          self.rafId = null;
-          var targets = Array.from(self.pending);
-          self.pending.clear();
-          for (var j = 0; j < targets.length; j++) {
-            self.refresh(targets[j]);
-          }
-        });
-      });
-    }
-
-    var winRaf = null;
-    window.addEventListener('resize', function () {
-      if (winRaf) cancelAnimationFrame(winRaf);
-      winRaf = requestAnimationFrame(function () {
-        self.instances.forEach(function (inst, el) {
-          self.refresh(el);
-        });
-      });
-    });
-  };
-
-  LiquidGlass.prototype.apply = function (element, options) {
-    if (this.instances.has(element)) return this.instances.get(element);
-
-    var opts = {
-      radius:     options && options.radius     != null ? options.radius     : 11,
-      strength:   options && options.strength   != null ? options.strength   : 14,
-      edgeWidth:  options && options.edgeWidth  != null ? options.edgeWidth  : 10,
-      blur:       options && options.blur       != null ? options.blur       : 0.5,
-      saturate:   options && options.saturate   != null ? options.saturate   : 1.8,
-      brightness: options && options.brightness != null ? options.brightness : 1.04
-    };
-
-    var inst = {
-      element: element,
-      options: opts,
-      id: null,
-      filterEl: null,
-      lastW: 0,
-      lastH: 0
-    };
-
-    this.instances.set(element, inst);
-
-    if (this.ro) this.ro.observe(element);
-
-    this._build(inst);
-    return inst;
-  };
-
-  LiquidGlass.prototype._build = function (inst) {
-    var el = inst.element;
-    var w = Math.max(1, Math.ceil(el.offsetWidth));
-    var h = Math.max(1, Math.ceil(el.offsetHeight));
-
-    if (inst.lastW === w && inst.lastH === h && inst.filterEl) return;
-
-    inst.lastW = w;
-    inst.lastH = h;
-
-    if (inst.filterEl && inst.filterEl.parentNode) {
-      inst.filterEl.parentNode.removeChild(inst.filterEl);
-    }
-
-    var id = 'lg-' + (++this.idc) + '-' +
-      Math.random().toString(36).slice(2, 7);
-
-    inst.id = id + '-f';
-
-    var o = inst.options;
-    var radius = Math.min(o.radius, Math.min(w, h) / 2);
-    var edgeW  = Math.min(o.edgeWidth, Math.min(w, h) / 3);
-
-    var map = getMap(w, h, radius, o.strength, edgeW);
-
-    var filter = document.createElementNS(SVG_NS, 'filter');
-    filter.setAttribute('id', inst.id);
-    filter.setAttribute('filterUnits', 'userSpaceOnUse');
-    filter.setAttribute('primitiveUnits', 'userSpaceOnUse');
-    filter.setAttribute('colorInterpolationFilters', 'sRGB');
-    filter.setAttribute('x', '0');
-    filter.setAttribute('y', '0');
-    filter.setAttribute('width', String(w));
-    filter.setAttribute('height', String(h));
-
-    var feImage = document.createElementNS(SVG_NS, 'feImage');
-    feImage.setAttribute('id', inst.id + '-img');
-    feImage.setAttribute('x', '0');
-    feImage.setAttribute('y', '0');
-    feImage.setAttribute('width', String(w));
-    feImage.setAttribute('height', String(h));
-    feImage.setAttribute('preserveAspectRatio', 'none');
-    feImage.setAttributeNS(XLINK_NS, 'xlink:href', map.dataURL);
-    feImage.setAttribute('href', map.dataURL);
-
-    var feDisp = document.createElementNS(SVG_NS, 'feDisplacementMap');
-    feDisp.setAttribute('in', 'SourceGraphic');
-    feDisp.setAttribute('in2', inst.id + '-img');
-    feDisp.setAttribute('xChannelSelector', 'R');
-    feDisp.setAttribute('yChannelSelector', 'G');
-    feDisp.setAttribute('scale', String(map.scale));
-
-    filter.appendChild(feImage);
-    filter.appendChild(feDisp);
-    this.svg.appendChild(filter);
-
-    inst.filterEl = filter;
-
-    this._applyStyle(inst);
-  };
-
-  LiquidGlass.prototype._applyStyle = function (inst) {
-    var el = inst.element;
-    var o = inst.options;
-
-    var bf = 'url(#' + inst.id + ') blur(' + o.blur + 'px) ' +
-      'saturate(' + o.saturate + ') brightness(' + o.brightness + ')';
-
-    el.style.setProperty('-webkit-backdrop-filter', bf);
-    el.style.setProperty('backdrop-filter', bf);
-    el.setAttribute('data-liquid-glass', 'on');
-  };
-
-  LiquidGlass.prototype.refresh = function (element) {
-    var inst = this.instances.get(element);
-    if (!inst) return;
-    this._build(inst);
-  };
-
-  LiquidGlass.prototype.destroy = function (element) {
-    var inst = this.instances.get(element);
-    if (!inst) return;
-
-    if (this.ro) this.ro.unobserve(element);
-
-    if (inst.filterEl && inst.filterEl.parentNode) {
-      inst.filterEl.parentNode.removeChild(inst.filterEl);
-    }
-
-    element.style.removeProperty('-webkit-backdrop-filter');
-    element.style.removeProperty('backdrop-filter');
-    element.removeAttribute('data-liquid-glass');
-
-    this.instances.delete(element);
-  };
-
-  LiquidGlass.prototype.destroyAll = function () {
-    var self = this;
-    this.instances.forEach(function (inst, el) {
-      self.destroy(el);
-    });
-  };
-
-  window.LiquidGlass = LiquidGlass;
-})();
-
-/* ================================================================
-   应用逻辑
-   ================================================================ */
-(function () {
-  'use strict';
-
-  /* ---------- 常量 ---------- */
   var COLORS = {
     '语文': '#C77B9E',
     '数学': '#6B8FD4',
@@ -1316,7 +1187,6 @@
     'stroke-width="2" stroke-linecap="round">' +
     '<path d="M6 6l12 12M18 6L6 18"/></svg>';
 
-  /* ---------- 状态 ---------- */
   var KEY = '';
   var PHOTO = '';
   var items = [];
@@ -1325,7 +1195,6 @@
   var pick = '';
   var lastSubject = '';
 
-  /* ---------- DOM ---------- */
   var listEl        = document.getElementById('list');
   var inputEl       = document.getElementById('newItem');
   var barEl         = document.getElementById('bar');
@@ -1340,55 +1209,6 @@
   var modeRandomBtn = document.getElementById('modeRandom');
   var dateLabel     = document.getElementById('dateLabel');
 
-  /* ---------- 液态玻璃实例 ---------- */
-  var lg = null;
-
-  function liquidGlassify(root) {
-    if (!lg) return;
-
-    var scope = root || document;
-
-    // 大按钮
-    scope.querySelectorAll('.btn').forEach(function (el) {
-      if (el.dataset.liquidGlass === 'on') return;
-      lg.apply(el, {
-        radius: 11,
-        strength: 15,
-        edgeWidth: 10,
-        blur: 0.4,
-        saturate: 1.8,
-        brightness: 1.05
-      });
-    });
-
-    // 小胶囊
-    scope.querySelectorAll('.mode-btn').forEach(function (el) {
-      if (el.dataset.liquidGlass === 'on') return;
-      lg.apply(el, {
-        radius: 15,
-        strength: 10,
-        edgeWidth: 6,
-        blur: 0.3,
-        saturate: 1.6,
-        brightness: 1.04
-      });
-    });
-
-    // 恢复按钮
-    scope.querySelectorAll('.restore').forEach(function (el) {
-      if (el.dataset.liquidGlass === 'on') return;
-      lg.apply(el, {
-        radius: 8,
-        strength: 8,
-        edgeWidth: 5,
-        blur: 0.3,
-        saturate: 1.5,
-        brightness: 1.03
-      });
-    });
-  }
-
-  /* ---------- 工具 ---------- */
   function save() {
     try { localStorage.setItem(KEY, JSON.stringify(items)); } catch (e) {}
   }
@@ -1426,7 +1246,6 @@
     }, 820);
   }
 
-  /* ================= 推荐逻辑 ================= */
   function pickableSubjects() {
     var seen = [];
     items.forEach(function (it) {
@@ -1454,7 +1273,7 @@
 
         var restoreAll = document.createElement('button');
         restoreAll.type = 'button';
-        restoreAll.className = 'btn btn-primary';
+        restoreAll.className = 'glass-btn primary';
         restoreAll.textContent = '恢复全部跳过';
         restoreAll.style.width = '100%';
         restoreAll.addEventListener('click', function () {
@@ -1466,7 +1285,6 @@
         emptyEl.textContent = '全部写完啦，去休息一会儿吧';
         suggestBody.appendChild(emptyEl);
       }
-      liquidGlassify(suggestBody);
       return;
     }
 
@@ -1532,7 +1350,7 @@
       tag.className = 'tag';
       tag.textContent = target.subject;
       tag.style.color = c;
-      tag.style.background = hexToRgba(c, 0.13);
+      tag.style.background = hexToRgba(c, 0.16);
       taskRow.appendChild(tag);
     }
 
@@ -1548,8 +1366,8 @@
 
     var doBtn = document.createElement('button');
     doBtn.type = 'button';
-    doBtn.className = 'btn btn-primary';
-    doBtn.textContent = '完成';
+    doBtn.className = 'glass-btn primary';
+    doBtn.innerHTML = '<span>完成</span>';
     doBtn.addEventListener('click', function () {
       items[idx].done = true;
       items[idx].skipped = false;
@@ -1564,8 +1382,8 @@
 
     var skipBtn = document.createElement('button');
     skipBtn.type = 'button';
-    skipBtn.className = 'btn btn-ghost';
-    skipBtn.textContent = '跳过';
+    skipBtn.className = 'glass-btn';
+    skipBtn.innerHTML = '<span>跳过</span>';
     skipBtn.addEventListener('click', function () {
       items[idx].skipped = true;
       items[idx].done = false;
@@ -1576,12 +1394,8 @@
     actions.appendChild(doBtn);
     actions.appendChild(skipBtn);
     suggestBody.appendChild(actions);
-
-    // 新增按钮也要上玻璃
-    liquidGlassify(suggestBody);
   }
 
-  /* ================= 科目下拉 ================= */
   function refreshSubjects() {
     var subs = pickableSubjects();
     var cur = pickSubject.value;
@@ -1608,7 +1422,6 @@
     }
   }
 
-  /* ================= 模式 ================= */
   function setMode(m) {
     mode = m;
     pick = '';
@@ -1636,7 +1449,6 @@
     suggest();
   });
 
-  /* ================= 渲染 ================= */
   function buildItem(item) {
     var li = document.createElement('li');
     li.className = 'item';
@@ -1778,12 +1590,8 @@
 
     refreshSubjects();
     suggest();
-
-    // 新增元素上玻璃
-    liquidGlassify();
   }
 
-  /* ================= 交互 ================= */
   function toggleDone(item) {
     var i = items.indexOf(item);
     if (i === -1) return;
@@ -1831,7 +1639,6 @@
     if (e.key === 'Enter') add();
   });
 
-  /* ================= 两步确认 ================= */
   function twoStep(btn, fn) {
     var orig = btn.textContent;
     var armed = false;
@@ -1875,74 +1682,51 @@
     render();
   });
 
-  /* ================= 启动 ================= */
-  function init() {
-    // 初始化液态玻璃引擎
-    lg = new LiquidGlass();
+  fetch('data/latest.json?v=' + Date.now())
+    .then(function (r) {
+      if (!r.ok) throw new Error(r.status);
+      return r.json();
+    })
+    .then(function (d) {
+      KEY = d.key || 'hw-list';
+      PHOTO = d.photo || '';
 
-    // 先给静态按钮上玻璃
-    requestAnimationFrame(function () {
-      liquidGlassify(document);
-    });
+      if (d.label) dateLabel.textContent = d.label;
 
-    // 加载数据
-    fetch('data/latest.json?v=' + Date.now())
-      .then(function (r) {
-        if (!r.ok) throw new Error(r.status);
-        return r.json();
-      })
-      .then(function (d) {
-        KEY = d.key || 'hw-list';
-        PHOTO = d.photo || '';
+      try {
+        items = JSON.parse(localStorage.getItem(KEY)) || null;
+      } catch (e) {
+        items = null;
+      }
 
-        if (d.label) dateLabel.textContent = d.label;
+      if (!items) {
+        items = d.items || [];
+        save();
+      }
 
-        try {
-          items = JSON.parse(localStorage.getItem(KEY)) || null;
-        } catch (e) {
-          items = null;
-        }
-
-        if (!items) {
-          items = d.items || [];
-          save();
-        }
-
-        items.forEach(function (it) {
-          if (!it.id) it.id = ++uid;
-          else uid = Math.max(uid, it.id);
-        });
-
-        lastSubject = localStorage.getItem(KEY + '-last') || '';
-
-        var savedMode = localStorage.getItem(KEY + '-mode');
-        mode = (savedMode === 'random') ? 'random' : 'group';
-        modeGroupBtn.classList.toggle('active', mode === 'group');
-        modeRandomBtn.classList.toggle('active', mode === 'random');
-
-        if (PHOTO) {
-          document.getElementById('photoImg').src = PHOTO;
-          document.getElementById('photoLink').href = PHOTO;
-          document.getElementById('photoCard').style.display = 'block';
-        }
-
-        render();
-
-        // 渲染完毕，再次上玻璃（覆盖动态生成的按钮）
-        requestAnimationFrame(function () {
-          liquidGlassify(document);
-        });
-      })
-      .catch(function () {
-        ptextEl.textContent = '暂时拉不到作业数据，刷新试试';
+      items.forEach(function (it) {
+        if (!it.id) it.id = ++uid;
+        else uid = Math.max(uid, it.id);
       });
-  }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
+      lastSubject = localStorage.getItem(KEY + '-last') || '';
+
+      var savedMode = localStorage.getItem(KEY + '-mode');
+      mode = (savedMode === 'random') ? 'random' : 'group';
+      modeGroupBtn.classList.toggle('active', mode === 'group');
+      modeRandomBtn.classList.toggle('active', mode === 'random');
+
+      if (PHOTO) {
+        document.getElementById('photoImg').src = PHOTO;
+        document.getElementById('photoLink').href = PHOTO;
+        document.getElementById('photoCard').style.display = 'block';
+      }
+
+      render();
+    })
+    .catch(function () {
+      ptextEl.textContent = '暂时拉不到作业数据，刷新试试';
+    });
 })();
 </script>
 </body>
