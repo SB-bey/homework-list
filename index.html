@@ -90,13 +90,21 @@
   .text { flex: 1; min-width: 0; cursor: pointer; line-height: 1.5; transition: color .15s ease; word-break: break-word; overflow-wrap: anywhere; }
   li.done .text { text-decoration: line-through; text-decoration-thickness: 2px; color: #667184; }
 
+  li.skipped .text { opacity: .5; font-style: italic; text-decoration: line-through; text-decoration-style: dotted; text-decoration-color: #555f6e; }
+  li.skipped .check { border-color: #3a4454; opacity: .5; }
+
   .del {
     flex-shrink: 0; width: 36px; height: 36px; border: none; background: none;
     color: #66718a; font-size: 20px; line-height: 1; cursor: pointer; border-radius: 50%;
     display: inline-flex; align-items: center; justify-content: center; transition: color .15s ease, background-color .15s ease;
   }
-  li.skipped .text { opacity: .5; font-style: italic; text-decoration: line-through; text-decoration-style: dotted; text-decoration-color: #555f6e; }
-  li.skipped .check { border-color: #3a4454; opacity: .5; }
+
+  .restore {
+    flex-shrink: 0; height: 32px; padding: 0 12px;
+    border: 1.5px solid #3a4454; border-radius: 9px;
+    background: transparent; color: #9aa5b4; font-size: 13px; cursor: pointer;
+    transition: color .15s ease, border-color .15s ease, background-color .15s ease;
+  }
 
   .group-title {
     display: flex; align-items: center; gap: 8px;
@@ -147,7 +155,6 @@
     border-radius: 9px; padding: 0 14px; font-size: 13px; cursor: pointer; transition: all .15s ease;
   }
   .mode-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
-  .pick-row select,
   .suggest-controls select {
     min-height: 34px;
     border: 1.5px solid #3a4454; background: var(--card); color: #dbe2ec;
@@ -186,6 +193,17 @@
     height: 46px; max-width: 104px;
   }
 
+  /* ---------- 底部批量操作 ---------- */
+  .actions { display: flex; gap: 10px; margin-top: 14px; }
+  .actions button {
+    flex: 1 1 0; min-height: 42px; border-radius: 11px; padding: 0 8px;
+    border: 1.5px solid #333b49; background: var(--panel); color: #9aa5b4;
+    font-size: 14px; cursor: pointer; transition: all .15s ease;
+  }
+  .actions button:disabled { opacity: .35; cursor: not-allowed; }
+  .actions button.armed { border-color: var(--danger); color: var(--danger); background: #2c1e23; }
+  .actions button:active:not(:disabled) { opacity: .75; }
+
   .hint { font-size: 12px; color: #8590a0; margin-top: 16px; text-align: center; line-height: 1.6; }
 
   /* ---------- 键盘焦点 ---------- */
@@ -196,10 +214,12 @@
   /* ---------- 仅在有鼠标悬停的设备启用 hover ---------- */
   @media (hover: hover) {
     .del:hover { color: var(--danger); background: #33222a; }
+    .restore:hover { color: var(--accent-2); border-color: var(--accent-2); background: #1d2a24; }
     .skip-btn:hover { color: var(--warn); border-color: var(--warn); background: #2a2418; }
     .mode-btn:not(.active):hover { border-color: #55627a; color: #c4ccd8; }
     .check:hover { border-color: var(--accent); }
     .do-btn:hover, .add-row button:hover { opacity: .9; }
+    .actions button:hover:not(:disabled):not(.armed) { border-color: #55627a; color: #c4ccd8; }
   }
 
   /* ---------- 平板 / 电脑 ---------- */
@@ -225,6 +245,7 @@
   @media (max-width: 360px) {
     .card { border-radius: 18px; }
     li { gap: 10px; }
+    .restore { padding: 0 9px; font-size: 12px; }
   }
 
   /* ---------- 减少动画 ---------- */
@@ -239,27 +260,31 @@
     <h1>📋 作业清单</h1>
     <span class="date">10月3日 周六 · 国庆假期</span>
   </div>
-  <div class="sub">点一下条目即可划掉，完成进度自动保存</div>
+  <div class="sub">点条目或方块即可划掉，进度自动保存</div>
   <div class="progress-wrap"><div class="progress-bar" id="bar"></div></div>
   <div class="progress-text" id="ptext"></div>
+
   <div class="suggest-card">
     <div class="suggest-head" id="suggestHead">🎯 下一个建议写</div>
     <div class="suggest-body" id="suggestBody"></div>
     <div class="suggest-controls">
       <span class="mode-label">模式</span>
-      <button class="mode-btn active" id="modeGroup">同科优先</button>
-      <button class="mode-btn" id="modeRandom">随机</button>
+      <button class="mode-btn active" id="modeGroup" type="button">同科优先</button>
+      <button class="mode-btn" id="modeRandom" type="button">随机</button>
       <span class="mode-label" style="margin-left:4px">指定科目</span>
-      <select id="pickSubject"><option value="">自动</option></select>
+      <select id="pickSubject" aria-label="指定科目"><option value="">自动</option></select>
     </div>
   </div>
+
   <div class="photo-card" id="photoCard" style="display:none">
     <div class="photo-head">📷 作业原图 · 看不清点开看大图</div>
     <a id="photoLink" href="#" target="_blank" rel="noopener">
       <img id="photoImg" src="" alt="作业原图">
     </a>
   </div>
+
   <ul id="list"></ul>
+
   <div class="add-row">
     <select id="newSubject" aria-label="选择科目">
       <option value="">科目</option>
@@ -272,29 +297,44 @@
       <option value="物理">物理</option>
     </select>
     <input id="newItem" type="text" placeholder="输入作业内容" maxlength="60">
-    <button id="addBtn">添加</button>
+    <button id="addBtn" type="button">添加</button>
   </div>
-  <div class="hint">推荐不喜欢？点「跳过它」换一个推荐；列表里点条目/方块划掉完成</div>
+
+  <div class="actions">
+    <button id="clearDone" type="button">清除已完成</button>
+    <button id="resetAll" type="button">重置全部</button>
+  </div>
+
+  <div class="hint">推荐不喜欢？点「跳过它」换一个，跳过的条目可以「恢复」</div>
 </div>
+
 <script>
 (function(){
   var KEY = '';
   var PHOTO = '';   // 当天作业原图，没有照片就留空 ''
   var COLORS = { '历史': '#9a7bd6', '化学': '#4aa3a3', '语文': '#c2579a', '英语': '#3fa86b', '政治': '#d0566e', '数学': '#4a7bd6', '物理': '#e08a3c' };
+  var SUBJECT_ORDER = ['语文','数学','英语','历史','政治','化学','物理'];
   var items = [];
-
-  var list = document.getElementById('list');
-  var input = document.getElementById('newItem');
-  var bar = document.getElementById('bar');
-  var ptext = document.getElementById('ptext');
-  var suggestBody = document.getElementById('suggestBody');
-  var suggestHead = document.getElementById('suggestHead');
-  var pickSubject = document.getElementById('pickSubject');
-  var mode = 'group';   // 'group' 同科优先 | 'random' 随机
-  var pick = '';        // '' 自动 | 科目名
+  var mode = 'group';    // 'group' 同科优先 | 'random' 随机
+  var pick = '';         // '' 自动 | 科目名
   var lastSubject = '';  // 记住正在写的科目
 
+  var list          = document.getElementById('list');
+  var input         = document.getElementById('newItem');
+  var bar           = document.getElementById('bar');
+  var ptext         = document.getElementById('ptext');
+  var suggestBody   = document.getElementById('suggestBody');
+  var suggestHead   = document.getElementById('suggestHead');
+  var pickSubject   = document.getElementById('pickSubject');
+  var clearDoneBtn  = document.getElementById('clearDone');
+  var resetAllBtn   = document.getElementById('resetAll');
+  var modeGroupBtn  = document.getElementById('modeGroup');
+  var modeRandomBtn = document.getElementById('modeRandom');
+
   function save(){ localStorage.setItem(KEY, JSON.stringify(items)); }
+  function buzz(ms){ if(navigator.vibrate){ try { navigator.vibrate(ms); } catch(e){} } }
+
+  /* ---------------- 推荐逻辑 ---------------- */
 
   function pickableSubjects(){
     var subs = [];
@@ -306,28 +346,46 @@
 
   function suggest(){
     var undone = items.filter(function(it){ return !it.done && !it.skipped; });
+    suggestHead.textContent = '🎯 下一个建议写';
+    suggestBody.innerHTML = '';
+
     if(!undone.length){
-      var sk = items.filter(function(it){ return it.skipped; }).length;
-      suggestBody.innerHTML = sk
-        ? '<span class="suggest-empty">🎉 待做的写完啦，还有 ' + sk + ' 项跳过的可以「恢复」</span>'
-        : '<span class="suggest-empty">🎉 全部写完啦，可以休息了！</span>';
-      suggestHead.textContent = '🎯 下一个建议写';
+      var skipped = items.filter(function(it){ return it.skipped; });
+      var empty = document.createElement('span');
+      empty.className = 'suggest-empty';
+      if(skipped.length){
+        empty.textContent = '待做的都处理完啦，还有 ' + skipped.length + ' 项被跳过';
+        suggestBody.appendChild(empty);
+        var rb = document.createElement('button');
+        rb.type = 'button';
+        rb.className = 'do-btn';
+        rb.textContent = '恢复全部跳过 (' + skipped.length + ')';
+        rb.addEventListener('click', function(){
+          items.forEach(function(it){ if(it.skipped) it.skipped = false; });
+          save(); render();
+        });
+        suggestBody.appendChild(rb);
+      } else {
+        empty.textContent = '🎉 全部写完啦，可以休息了！';
+        suggestBody.appendChild(empty);
+      }
       return;
     }
+
     var target = null, reason = '';
+
     if(pick){
       var pu = undone.filter(function(it){ return it.subject === pick; });
       if(pu.length){ target = pu[0]; reason = '指定科目「' + pick + '」'; }
       else {
         suggestBody.innerHTML = '<span class="suggest-empty">「' + pick + '」已经写完啦 ✅</span>';
-        suggestHead.textContent = '🎯 下一个建议写';
         return;
       }
     } else if(mode === 'group'){
       // 先接着写正在写的科目（同科集中写完），写完再换剩余最多的科目
-      var lastUndone = null;
+      var lastUndone = null, lu = [];
       if(lastSubject){
-        var lu = undone.filter(function(it){ return it.subject === lastSubject; });
+        lu = undone.filter(function(it){ return it.subject === lastSubject; });
         if(lu.length) lastUndone = lu[0];
       }
       if(lastUndone){
@@ -357,9 +415,10 @@
         reason = '随机挑一项';
       }
     }
+
     var idx = items.indexOf(target);
-    suggestBody.innerHTML = '';
     suggestHead.textContent = '🎯 下一个建议写 · ' + reason;
+
     if(target.subject){
       var tag = document.createElement('span');
       tag.className = 'tag';
@@ -367,20 +426,30 @@
       tag.textContent = target.subject;
       suggestBody.appendChild(tag);
     }
+
     var txt = document.createElement('span');
     txt.className = 'suggest-text';
     txt.textContent = target.text;
     suggestBody.appendChild(txt);
+
     var btn = document.createElement('button');
+    btn.type = 'button';
     btn.className = 'do-btn';
     btn.textContent = '完成它 ✓';
     btn.addEventListener('click', function(){
       items[idx].done = true;
-      if(target.subject){ lastSubject = target.subject; localStorage.setItem(KEY + '-last', lastSubject); }
-      save(); render(); suggest();
+      items[idx].skipped = false;
+      if(target.subject){
+        lastSubject = target.subject;
+        localStorage.setItem(KEY + '-last', lastSubject);
+      }
+      buzz(15);
+      save(); render();
     });
     suggestBody.appendChild(btn);
+
     var skbtn = document.createElement('button');
+    skbtn.type = 'button';
     skbtn.className = 'skip-btn';
     skbtn.textContent = '跳过它 ⏭';
     skbtn.setAttribute('aria-label','暂时跳过这项推荐');
@@ -391,6 +460,8 @@
     });
     suggestBody.appendChild(skbtn);
   }
+
+  /* ---------------- 科目下拉 ---------------- */
 
   function refreshSubjects(){
     var subs = pickableSubjects();
@@ -405,49 +476,105 @@
       pickSubject.appendChild(o);
     });
     if(subs.indexOf(cur) !== -1) pickSubject.value = cur;
-    else pick = '';
+    else { pick = ''; pickSubject.value = ''; }
   }
 
-  document.getElementById('modeGroup').addEventListener('click', function(){
-    mode = 'group'; pick = '';
-    document.getElementById('modeGroup').classList.add('active');
-    document.getElementById('modeRandom').classList.remove('active');
+  /* ---------------- 模式切换 ---------------- */
+
+  function setMode(m){
+    mode = m;
+    pick = '';
     pickSubject.value = '';
-    refreshSubjects(); suggest();
-  });
-  document.getElementById('modeRandom').addEventListener('click', function(){
-    mode = 'random'; pick = '';
-    document.getElementById('modeRandom').classList.add('active');
-    document.getElementById('modeGroup').classList.remove('active');
-    pickSubject.value = '';
-    refreshSubjects(); suggest();
-  });
+    modeGroupBtn.classList.toggle('active', m === 'group');
+    modeRandomBtn.classList.toggle('active', m === 'random');
+    if(KEY) localStorage.setItem(KEY + '-mode', m);
+    refreshSubjects();
+    suggest();
+  }
+
+  modeGroupBtn.addEventListener('click', function(){ setMode('group'); });
+  modeRandomBtn.addEventListener('click', function(){ setMode('random'); });
   pickSubject.addEventListener('change', function(){
     pick = pickSubject.value;
-    if(pick) {
-      mode = 'group';
-      document.getElementById('modeGroup').classList.add('active');
-      document.getElementById('modeRandom').classList.remove('active');
-    }
+    if(pick) setMode('group') , (pick = pickSubject.value) , (pickSubject.value = pick);
     suggest();
   });
 
-  var SUBJECT_ORDER = ['语文','数学','英语','历史','政治','化学','物理'];
+  /* ---------------- 渲染 ---------------- */
+
+  function buildItem(item){
+    var li = document.createElement('li');
+    if(item.done) li.className = 'done';
+    else if(item.skipped) li.className = 'skipped';
+
+    var check = document.createElement('span');
+    check.className = 'check';
+    check.setAttribute('role','checkbox');
+    check.setAttribute('tabindex','0');
+    check.setAttribute('aria-checked', item.done ? 'true' : 'false');
+    check.setAttribute('aria-label','完成');
+    check.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12.5 9.5 18 20 6.5"/></svg>';
+    check.addEventListener('click', function(){ toggleDone(item); });
+    check.addEventListener('keydown', function(e){
+      if(e.key === ' ' || e.key === 'Enter'){ e.preventDefault(); toggleDone(item); }
+    });
+
+    var text = document.createElement('span');
+    text.className = 'text';
+    text.textContent = item.text;
+    text.addEventListener('click', function(){ toggleDone(item); });
+
+    li.appendChild(check);
+    li.appendChild(text);
+
+    if(item.skipped){
+      var rs = document.createElement('button');
+      rs.type = 'button';
+      rs.className = 'restore';
+      rs.textContent = '恢复';
+      rs.setAttribute('aria-label','恢复这项作业');
+      rs.addEventListener('click', function(){
+        item.skipped = false;
+        save(); render();
+      });
+      li.appendChild(rs);
+    }
+
+    var del = document.createElement('button');
+    del.type = 'button';
+    del.className = 'del';
+    del.innerHTML = '×';
+    del.setAttribute('aria-label','删除');
+    del.addEventListener('click', function(){
+      var i = items.indexOf(item);
+      if(i === -1) return;
+      items.splice(i, 1);
+      save(); render();
+    });
+    li.appendChild(del);
+
+    return li;
+  }
 
   function render(){
     list.innerHTML = '';
-    var done = 0;
+    var done = 0, skipped = 0;
+
     // 按科目分组：同科作业聚在一起，顺序固定 语数英史政化+物理，最后"其他"
     var groups = {};
     items.forEach(function(item){
       var s = item.subject || '其他';
       if(!groups[s]) groups[s] = [];
       groups[s].push(item);
+      if(item.done) done++;
+      if(item.skipped) skipped++;
     });
+
     function renderGroup(sub){
       var arr = groups[sub];
       if(!arr || !arr.length) return;
       arr = arr.slice().sort(function(a,b){ return (a.skipped?1:0) - (b.skipped?1:0); });
+
       var title = document.createElement('div');
       title.className = 'group-title';
       var dot = document.createElement('span');
@@ -456,52 +583,44 @@
       title.appendChild(dot);
       title.appendChild(document.createTextNode(sub));
       list.appendChild(title);
-      arr.forEach(function(item, i){
-        if(item.done) done++;
-        var li = document.createElement('li');
-        if(item.done) li.className = 'done';
-        else if(item.skipped) li.className = 'skipped';
-        var check = document.createElement('span');
-        check.className = 'check';
-        check.setAttribute('aria-label','完成');
-        check.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 12.5 9.5 18 20 6.5"/></svg>';
-        check.addEventListener('click', function(){ toggleDone(items.indexOf(item)); });
-        var text = document.createElement('span');
-        text.className = 'text';
-        text.appendChild(document.createTextNode(item.text));
-        text.addEventListener('click', function(){ toggleDone(items.indexOf(item)); });
-        var del = document.createElement('button');
-        del.className = 'del';
-        del.innerHTML = '×';
-        del.setAttribute('aria-label','删除');
-        del.addEventListener('click', function(){ items.splice(items.indexOf(item),1); save(); render(); });
-        li.appendChild(check);
-        li.appendChild(text);
-        li.appendChild(del);
-        list.appendChild(li);
-      });
+
+      arr.forEach(function(item){ list.appendChild(buildItem(item)); });
     }
+
     SUBJECT_ORDER.forEach(renderGroup);
     renderGroup('其他');
-    var pct = items.length ? Math.round(done/items.length*100) : 0;
+
+    var pct = items.length ? Math.round(done / items.length * 100) : 0;
     bar.style.width = pct + '%';
-    ptext.textContent = items.length ? '已完成 ' + done + ' / ' + items.length + ' 项' : '还没有作业';
+
+    if(!items.length){
+      ptext.textContent = '还没有作业，下面添加一条吧';
+    } else {
+      ptext.textContent = '已完成 ' + done + ' / ' + items.length + ' 项'
+        + (skipped ? ' · 跳过 ' + skipped : '');
+    }
+
+    clearDoneBtn.disabled = !done;
+    resetAllBtn.disabled = !items.length;
+
     refreshSubjects();
     suggest();
   }
 
-  function toggleDone(idx){
-    items[idx].done = !items[idx].done;
-    if(items[idx].done && items[idx].subject){
-      lastSubject = items[idx].subject;
-      localStorage.setItem(KEY + '-last', lastSubject);
-    }
-    save(); render();
-  }
+  /* ---------------- 交互 ---------------- */
 
-  function toggleSkip(idx){
-    items[idx].skipped = !items[idx].skipped;
-    if(items[idx].skipped) items[idx].done = false;
+  function toggleDone(item){
+    var i = items.indexOf(item);
+    if(i === -1) return;
+    items[i].done = !items[i].done;
+    if(items[i].done){
+      items[i].skipped = false;
+      if(items[i].subject){
+        lastSubject = items[i].subject;
+        localStorage.setItem(KEY + '-last', lastSubject);
+      }
+      buzz(15);
+    }
     save(); render();
   }
 
@@ -512,35 +631,76 @@
     items.push({ text: v, subject: subject, done: false, skipped: false });
     input.value = '';
     document.getElementById('newSubject').value = '';
-    save();
-    render();
+    save(); render();
     input.focus();
   }
+
   document.getElementById('addBtn').addEventListener('click', add);
   input.addEventListener('keydown', function(e){ if(e.key === 'Enter') add(); });
 
-  // 从仓库数据文件调取当天作业（data/latest.json 每晚更新指向最新一天）
+  /* ---------------- 批量操作（两步确认） ---------------- */
+
+  function twoStep(btn, fn){
+    var orig = btn.textContent, armed = false, timer = null;
+    function disarm(){
+      armed = false;
+      btn.textContent = orig;
+      btn.classList.remove('armed');
+      clearTimeout(timer);
+    }
+    btn.addEventListener('click', function(){
+      if(btn.disabled) return;
+      if(armed){ disarm(); fn(); return; }
+      armed = true;
+      btn.textContent = '再点一次确认';
+      btn.classList.add('armed');
+      timer = setTimeout(disarm, 3000);
+    });
+  }
+
+  twoStep(clearDoneBtn, function(){
+    items = items.filter(function(it){ return !it.done; });
+    save(); render();
+  });
+
+  twoStep(resetAllBtn, function(){
+    items.forEach(function(it){ it.done = false; it.skipped = false; });
+    save(); render();
+  });
+
+  /* ---------------- 数据加载 ---------------- */
+
   fetch('data/latest.json?v=' + Date.now())
     .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
     .then(function(d){
       KEY = d.key || 'hw-list';
       PHOTO = d.photo || '';
       document.querySelector('.date').textContent = d.label || '';
+
       try { items = JSON.parse(localStorage.getItem(KEY)) || null; } catch(e) { items = null; }
       if(!items){
         items = d.items || [];
         save();
       }
+
       lastSubject = localStorage.getItem(KEY + '-last') || '';
+
+      // 恢复上次使用的模式
+      var savedMode = localStorage.getItem(KEY + '-mode');
+      mode = (savedMode === 'random') ? 'random' : 'group';
+      modeGroupBtn.classList.toggle('active', mode === 'group');
+      modeRandomBtn.classList.toggle('active', mode === 'random');
+
       // 作业原图：有照片就显示
       if(PHOTO){
         var photoCard = document.getElementById('photoCard');
-        var photoImg = document.getElementById('photoImg');
+        var photoImg  = document.getElementById('photoImg');
         var photoLink = document.getElementById('photoLink');
         photoImg.src = PHOTO;
         photoLink.href = PHOTO;
         photoCard.style.display = 'block';
       }
+
       render();
     })
     .catch(function(){
