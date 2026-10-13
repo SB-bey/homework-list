@@ -1,14 +1,13 @@
 {
   "date": "2026-10-13",
   "label": "10月13日 周二",
-  "key": "hw-list-2026-10-13",
+  "key": "hw-list-2026-10-13-2",
   "photo": "",
   "items": [
-    { "text": "第一个短语", "subject": "英语", "done": false },
-    { "text": "基础训练第二课时", "subject": "英语", "done": false },
-    { "text": "文章上半部分", "subject": "语文", "done": false },
-    { "text": "基础训练25~26页", "subject": "语文", "done": false },
-    { "text": "42~43页", "subject": "数学", "done": false },
-    { "text": "基础训练13课", "subject": "历史", "done": false }
+    { "text": "抄译背下半", "subject": "英语", "done": false },
+    { "text": "《基》后二", "subject": "数学", "done": false },
+    { "text": "《基》27页", "subject": "语文", "done": false },
+    { "text": "试卷33-34页", "subject": "化学", "done": false },
+    { "text": "P25下，P34-35", "subject": "物理", "done": false }
   ]
 }
