@@ -1,16 +1,17 @@
 {
-  "date": "2026-10-15",
-  "label": "10月15日 周四",
-  "key": "hw-list-2026-10-15",
-  "photo": "photos/2026-10-15.jpg",
+  "date": "2026-10-19",
+  "label": "10月19日 周一 · 周末作业",
+  "key": "hw-list-2026-10-19",
+  "photo": "",
   "items": [
-    { "text": "基础训练 51~52 页", "subject": "语文", "done": false },
-    { "text": "写一页", "subject": "数学", "done": false },
-    { "text": "数学书 83~84 页", "subject": "数学", "done": false },
+    { "text": "书 58~59、62~69 页", "subject": "物理", "done": false },
+    { "text": "作业 28~30 页", "subject": "化学", "done": false },
+    { "text": "13、14", "subject": "历史", "done": false },
+    { "text": "第五课", "subject": "英语", "done": false },
     { "text": "抄一背", "subject": "英语", "done": false },
-    { "text": "第 5 课", "subject": "英语", "done": false },
-    { "text": "10 个短语", "subject": "英语", "done": false },
-    { "text": "基础训练 36~37 页", "subject": "物理", "done": false },
-    { "text": "基础训练 26~28 页", "subject": "化学", "done": false }
+    { "text": "单词", "subject": "英语", "done": false },
+    { "text": "彩密本", "subject": "英语", "done": false },
+    { "text": "基础训练 2 页", "subject": "数学", "done": false },
+    { "text": "基础训练 16 页", "subject": "语文", "done": false }
   ]
 }
