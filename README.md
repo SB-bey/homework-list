@@ -2,7 +2,7 @@
 
 一个**每天自动更新的作业管理小网站**：每晚把当天的各科作业整理成可勾选的清单，写一项划一项，还有"推荐下一个写什么"帮你安排顺序。
 
-👉 **线上地址：https://sb-bey.github.io/homework-list/**
+👉 **线上地址：https://tyeod-yomuh.github.io/homework-list/**
 
 ---
 
@@ -134,7 +134,7 @@ homework-list/
 
 - 托管：**GitHub Pages**（Source = main 分支，仓库根目录）。
 - 推送后约 1-2 分钟自动生效。
-- 域名：`https://sb-bey.github.io/homework-list/`
+- 域名：`https://tyeod-yomuh.github.io/homework-list/`
 - 仓库：`SB-bey/homework-list`
 
 ---

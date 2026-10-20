@@ -723,7 +723,7 @@
   }
 
   /* 每天打开时：先尝试从 GitHub 拉最新作业 JSON */
-  fetch('https://raw.githubusercontent.com/SB-bey/homework-list/main/data/latest.json?v=' + Date.now())
+  fetch('https://raw.githubusercontent.com/tyeod-yomuh/homework-list/main/data/latest.json?v=' + Date.now())
     .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
     .then(function(d){ startApp(d); })
     .catch(function(){ startApp(FALLBACK); });
