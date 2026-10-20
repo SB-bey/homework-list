@@ -331,7 +331,10 @@
   var modeGroupBtn  = document.getElementById('modeGroup');
   var modeRandomBtn = document.getElementById('modeRandom');
 
-  function save(){ localStorage.setItem(KEY, JSON.stringify(items)); }
+  /* 安全存储：有些手机浏览器在本地打开文件时会禁用 localStorage，直接访问会抛错把页面卡死，这里全部包 try */
+  function sGet(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+  function sSet(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+  function save(){ sSet(KEY, JSON.stringify(items)); }
   function buzz(ms){ if(navigator.vibrate){ try { navigator.vibrate(ms); } catch(e){} } }
 
   /* ---------------- 推荐逻辑 ---------------- */
@@ -441,7 +444,7 @@
       items[idx].skipped = false;
       if(target.subject){
         lastSubject = target.subject;
-        localStorage.setItem(KEY + '-last', lastSubject);
+        sSet(KEY + '-last', lastSubject);
       }
       buzz(15);
       save(); render();
@@ -487,7 +490,7 @@
     pickSubject.value = '';
     modeGroupBtn.classList.toggle('active', m === 'group');
     modeRandomBtn.classList.toggle('active', m === 'random');
-    if(KEY) localStorage.setItem(KEY + '-mode', m);
+    if(KEY) sSet(KEY + '-mode', m);
     refreshSubjects();
     suggest();
   }
@@ -617,7 +620,7 @@
       items[i].skipped = false;
       if(items[i].subject){
         lastSubject = items[i].subject;
-        localStorage.setItem(KEY + '-last', lastSubject);
+        sSet(KEY + '-last', lastSubject);
       }
       buzz(15);
     }
@@ -677,16 +680,16 @@
       PHOTO = d.photo || '';
       document.querySelector('.date').textContent = d.label || '';
 
-      try { items = JSON.parse(localStorage.getItem(KEY)) || null; } catch(e) { items = null; }
+      try { items = JSON.parse(sGet(KEY)) || null; } catch(e) { items = null; }
       if(!items){
         items = d.items || [];
         save();
       }
 
-      lastSubject = localStorage.getItem(KEY + '-last') || '';
+      lastSubject = sGet(KEY + '-last') || '';
 
       // 恢复上次使用的模式
-      var savedMode = localStorage.getItem(KEY + '-mode');
+      var savedMode = sGet(KEY + '-mode');
       mode = (savedMode === 'random') ? 'random' : 'group';
       modeGroupBtn.classList.toggle('active', mode === 'group');
       modeRandomBtn.classList.toggle('active', mode === 'random');
