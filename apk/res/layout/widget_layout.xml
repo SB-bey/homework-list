@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/widget_bg"
-    android:padding="12dp"
+    android:padding="10dp"
     android:gravity="center_vertical">
 
     <TextView
@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="#FFFFFF"
-        android:textSize="16sp"
+        android:textSize="15sp"
         android:textStyle="bold"
         android:maxLines="1"
         android:ellipsize="end"
@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="#E8E8E8"
-        android:textSize="13sp"
+        android:textSize="12sp"
         android:maxLines="1"
         android:ellipsize="end"
         android:text="" />
@@ -34,7 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="#E8E8E8"
-        android:textSize="13sp"
+        android:textSize="12sp"
         android:maxLines="1"
         android:ellipsize="end"
         android:text="" />
@@ -44,7 +44,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="#E8E8E8"
-        android:textSize="13sp"
+        android:textSize="12sp"
         android:maxLines="1"
         android:ellipsize="end"
         android:text="" />
@@ -54,38 +54,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="#E8E8E8"
-        android:textSize="13sp"
+        android:textSize="12sp"
         android:maxLines="1"
         android:ellipsize="end"
         android:text="" />
 
     <TextView
-        android:id="@+id/w_i5"
+        android:id="@+id/w_random"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textColor="#E8E8E8"
+        android:background="@drawable/widget_random_bg"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:textColor="#4FC3F7"
         android:textSize="13sp"
-        android:maxLines="1"
+        android:textStyle="bold"
+        android:maxLines="2"
         android:ellipsize="end"
-        android:text="" />
-
-    <TextView
-        android:id="@+id/w_i6"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#E8E8E8"
-        android:textSize="13sp"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:text="" />
-
-    <TextView
-        android:id="@+id/w_more"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#9AA0A6"
-        android:textSize="11sp"
-        android:maxLines="1"
-        android:ellipsize="end"
-        android:text="点开写作业" />
+        android:text="🎲 随机抽一个作业" />
 </LinearLayout>
