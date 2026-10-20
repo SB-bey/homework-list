@@ -1,0 +1,5 @@
+# 构建产物与签名密钥：APK 放 GitHub Releases，不进源码仓库
+build/
+*.keystore
+*.apk
+*.idsig
