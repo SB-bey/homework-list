@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/widget_bg"
+    android:padding="12dp"
+    android:gravity="center_vertical">
+
+    <TextView
+        android:id="@+id/w_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:text="作业清单" />
+
+    <TextView
+        android:id="@+id/w_i1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#E8E8E8"
+        android:textSize="13sp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/w_i2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#E8E8E8"
+        android:textSize="13sp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/w_i3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#E8E8E8"
+        android:textSize="13sp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/w_i4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#E8E8E8"
+        android:textSize="13sp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/w_i5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#E8E8E8"
+        android:textSize="13sp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/w_i6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#E8E8E8"
+        android:textSize="13sp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:text="" />
+
+    <TextView
+        android:id="@+id/w_more"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#9AA0A6"
+        android:textSize="11sp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:text="点开写作业" />
+</LinearLayout>

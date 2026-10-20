@@ -135,7 +135,7 @@ homework-list/
 - 托管：**GitHub Pages**（Source = main 分支，仓库根目录）。
 - 推送后约 1-2 分钟自动生效。
 - 域名：`https://tyeod-yomuh.github.io/homework-list/`
-- 仓库：`SB-bey/homework-list`
+- 仓库：`tyeod-yomuh/homework-list`
 
 ---
 

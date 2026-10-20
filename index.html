@@ -671,6 +671,9 @@
     save(); render();
   });
 
+  /* 点击按钮震动反馈 */
+  document.addEventListener('click', function(e){ buzz(12); });
+
   /* ---------------- 数据加载 ---------------- */
 
   fetch('data/latest.json?v=' + Date.now())
