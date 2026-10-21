@@ -24,10 +24,16 @@ echo "[6/7] zipalign 对齐..."
 $BT/zipalign -f 4 build/app-unsigned.apk build/app-aligned.apk
 
 echo "[7/7] 签名..."
-if [ ! -f build/hw.keystore ]; then
-  keytool -genkeypair -v -keystore build/hw.keystore -alias hw -keyalg RSA -keysize 2048 -validity 10000 -storepass hw123456 -keypass hw123456 -dname "CN=HomeworkList, OU=HW, O=HW, L=CN, S=CN, C=CN" >/dev/null 2>&1
+# 签名密钥：优先用主目录固定 keystore（保证所有版本签名一致，可覆盖升级）
+KS="$(dirname "$0")/../hw.keystore"
+if [ ! -f "$KS" ]; then
+  KS="$(dirname "$0")/build/hw.keystore"
 fi
-$BT/apksigner sign --ks build/hw.keystore --ks-pass pass:hw123456 --key-pass pass:hw123456 --out 作业清单.apk build/app-aligned.apk
+if [ ! -f "$KS" ]; then
+  mkdir -p build
+  keytool -genkeypair -v -keystore "$KS" -alias hw -keyalg RSA -keysize 2048 -validity 10000 -storepass hw123456 -keypass hw123456 -dname "CN=HomeworkList, OU=HW, O=HW, L=CN, S=CN, C=CN" >/dev/null 2>&1
+fi
+$BT/apksigner sign --ks "$KS" --ks-pass pass:hw123456 --key-pass pass:hw123456 --out 作业清单.apk build/app-aligned.apk
 $BT/apksigner verify 作业清单.apk && echo "✓ 签名验证通过"
 
 echo "=== 完成 ==="
