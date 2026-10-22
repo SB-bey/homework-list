@@ -1,0 +1,15 @@
+{
+  "date": "2026-10-22",
+  "label": "10月22日 周四",
+  "key": "hw-list-2026-10-22",
+  "photo": "",
+  "items": [
+    { "text": "基础训练 64~65 页", "subject": "语文", "done": false },
+    { "text": "往后写两页", "subject": "数学", "done": false },
+    { "text": "一张试卷", "subject": "政治", "done": false },
+    { "text": "30~33 页", "subject": "化学", "done": false },
+    { "text": "42~43 页", "subject": "物理", "done": false },
+    { "text": "背诵", "subject": "英语", "done": false },
+    { "text": "第三课基础训练", "subject": "英语", "done": false }
+  ]
+}
